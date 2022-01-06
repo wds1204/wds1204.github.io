@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    浅析Binder之ServiceManager |
+    
+    modi.wu
+  </title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-浅析Binder之ServiceManager" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h1 class="article-title" itemprop="name">
+  浅析Binder之ServiceManager
+</h1>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/01/07/%E6%B5%85%E6%9E%90Binder%E4%B9%8BServiceManager/" class="article-date">
+  <time datetime="2022-01-06T16:42:04.000Z" itemprop="datePublished">2022-01-07</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Android/">Android</a> / <a class="article-category-link" href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">源码分析</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+      <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的过去过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。</p>
+<span id="more"></span>
+<h3 id="1-ServiceManager的入口函数"><a href="#1-ServiceManager的入口函数" class="headerlink" title="1. ServiceManager的入口函数"></a>1. ServiceManager的入口函数</h3><blockquote>
+<p>frameworks/native/cmds/servicemanager/service_manager.c</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">binder_state</span> *<span class="title">bs</span>;</span><span class="comment">//用存储binder消息的结构体</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> <span class="title">selinux_callback</span> <span class="title">cb</span>;</span></span><br><span class="line">    <span class="keyword">char</span> *driver;</span><br><span class="line">    <span class="keyword">if</span> (argc &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        driver = argv[<span class="number">1</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        driver = <span class="string">&quot;/dev/binder&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    bs = <span class="built_in">binder_open</span>(driver, <span class="number">128</span>*<span class="number">1024</span>);<span class="comment">// 1 打开binder驱动</span></span><br><span class="line">    <span class="keyword">if</span> (!bs) &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="built_in">sleep</span>(UINT_MAX);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">binder_become_context_manager</span>(bs)) &#123;<span class="comment">// 2 成为manager，把自己的handle设为0</span></span><br><span class="line">        <span class="built_in">ALOGE</span>(<span class="string">&quot;cannot become context manager (%s)\n&quot;</span>, <span class="built_in">strerror</span>(errno));</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="built_in">binder_loop</span>(bs, svcmgr_handler);<span class="comment">//3 循环处理客户端发过来的请求</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先接收一下<code>main</code>函数中<code>binder_state</code>这个结构体，用来存储binder的三个信息。</p>
+<blockquote>
+<p>frameworks/native/cmds/servicemanager/binder.c</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">binder_state</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line">    <span class="keyword">void</span> *mapped;</span><br><span class="line">    <span class="keyword">size_t</span> mapsize;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>fd: binder设备的文件描述符</li>
+<li>*mmaped:  binder设备文件映射到进程的地址空间</li>
+<li>mapsie: 内存映射后，系统分配的地址空间大小，默认为128KB</li>
+</ul>
+<p>在<code>main</code>函数中<code>binder_open</code>用于打开<code>binder</code>设备，并申请128KB大小的内存空间。<code>binder_become_context_manager</code>函数将<code>serviceManager</code>注册成为Binder通信的上下文handle为0。调用<code>binder_loop</code>函数，循环等待和处理客户端。</p>
+<h4 id="1-1-打开binder设备"><a href="#1-1-打开binder设备" class="headerlink" title="1.1- 打开binder设备"></a>1.1- 打开binder设备</h4><blockquote>
+<p>frameworks/native/cmds/servicemanager/binder.c</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct binder_state *<span class="title">binder_open</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* driver, <span class="keyword">size_t</span> mapsize)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">binder_state</span> *<span class="title">bs</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">binder_version</span> <span class="title">vers</span>;</span></span><br><span class="line"></span><br><span class="line">    bs = <span class="built_in">malloc</span>(<span class="built_in"><span class="keyword">sizeof</span></span>(*bs));</span><br><span class="line">    <span class="keyword">if</span> (!bs) &#123;</span><br><span class="line">        errno = ENOMEM;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bs-&gt;fd = <span class="built_in">open</span>(driver, O_RDWR | O_CLOEXEC);</span><br><span class="line">    <span class="keyword">if</span> (bs-&gt;fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr,<span class="string">&quot;binder: cannot open %s (%s)\n&quot;</span>,</span><br><span class="line">                driver, <span class="built_in">strerror</span>(errno));</span><br><span class="line">        <span class="keyword">goto</span> fail_open;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((<span class="built_in">ioctl</span>(bs-&gt;fd, BINDER_VERSION, &amp;vers) == <span class="number">-1</span>) ||</span><br><span class="line">        (vers.protocol_version != BINDER_CURRENT_PROTOCOL_VERSION)) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr,</span><br><span class="line">                <span class="string">&quot;binder: kernel driver version (%d) differs from user space version (%d)\n&quot;</span>,</span><br><span class="line">                vers.protocol_version, BINDER_CURRENT_PROTOCOL_VERSION);</span><br><span class="line">        <span class="keyword">goto</span> fail_open;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bs-&gt;mapsize = mapsize;</span><br><span class="line">    bs-&gt;mapped = <span class="built_in">mmap</span>(<span class="literal">NULL</span>, mapsize, PROT_READ, MAP_PRIVATE, bs-&gt;fd, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (bs-&gt;mapped == MAP_FAILED) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr,<span class="string">&quot;binder: cannot map device (%s)\n&quot;</span>,</span><br><span class="line">                <span class="built_in">strerror</span>(errno));</span><br><span class="line">        <span class="keyword">goto</span> fail_map;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bs;</span><br><span class="line"></span><br><span class="line">fail_map:</span><br><span class="line">    <span class="built_in">close</span>(bs-&gt;fd);</span><br><span class="line">fail_open:</span><br><span class="line">    <span class="built_in">free</span>(bs);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有了之前分析过ProcessState的过程，再看见这个函数明显就熟悉很多了。先通过<code>open</code>函数打开binder设备文件，然后在调用<code>ioctl</code>函数获取Binder的版本，最后调用<code>mmap</code>函数进行内存映射，这样binder设备文件映射到进程的内存空间，这个空间大小128KB。完成这些步骤后会讲地址空间的大小和起始地址以及该文件的描述符保存在<code>binder_state</code>结构体中。</p>
+<h4 id="1-2-成为上下文管理者"><a href="#1-2-成为上下文管理者" class="headerlink" title="1.2- 成为上下文管理者"></a>1.2- 成为上下文管理者</h4><blockquote>
+<p>frameworks/native/cmds/servicemanager/binder.c</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binder_become_context_manager</span><span class="params">(struct binder_state *bs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">ioctl</span>(bs-&gt;fd, BINDER_SET_CONTEXT_MGR, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-binder-loop循环等待"><a href="#1-3-binder-loop循环等待" class="headerlink" title="1.3- binder-loop循环等待"></a>1.3- binder-loop循环等待</h4><blockquote>
+<p>frameworks/native/cmds/servicemanager/binder.c</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">binder_loop</span><span class="params">(struct binder_state *bs, binder_handler func)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> res;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">binder_write_read</span> <span class="title">bwr</span>;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> readbuf[<span class="number">32</span>];</span><br><span class="line"></span><br><span class="line">    bwr.write_size = <span class="number">0</span>;</span><br><span class="line">    bwr.write_consumed = <span class="number">0</span>;</span><br><span class="line">    bwr.write_buffer = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    readbuf[<span class="number">0</span>] = BC_ENTER_LOOPER;</span><br><span class="line">    <span class="built_in">binder_write</span>(bs, readbuf, <span class="built_in"><span class="keyword">sizeof</span></span>(<span class="keyword">uint32_t</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        bwr.read_size = <span class="built_in"><span class="keyword">sizeof</span></span>(readbuf);</span><br><span class="line">        bwr.read_consumed = <span class="number">0</span>;</span><br><span class="line">        bwr.read_buffer = (<span class="keyword">uintptr_t</span>) readbuf;</span><br><span class="line"></span><br><span class="line">        res = <span class="built_in">ioctl</span>(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (res &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">ALOGE</span>(<span class="string">&quot;binder_loop: ioctl failed (%s)\n&quot;</span>, <span class="built_in">strerror</span>(errno));</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        res = <span class="built_in">binder_parse</span>(bs, <span class="number">0</span>, (<span class="keyword">uintptr_t</span>) readbuf, bwr.read_consumed, func);</span><br><span class="line">        <span class="keyword">if</span> (res == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">ALOGE</span>(<span class="string">&quot;binder_loop: unexpected reply?!\n&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (res &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">ALOGE</span>(<span class="string">&quot;binder_loop: io error %d %s\n&quot;</span>, res, <span class="built_in">strerror</span>(errno));</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>binder_write</code>函数</p>
+<blockquote>
+<p>frameworks/native/cmds/servicemanager/binder.c</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binder_write</span><span class="params">(struct binder_state *bs, <span class="keyword">void</span> *data, <span class="keyword">size_t</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">binder_write_read</span> <span class="title">bwr</span>;</span></span><br><span class="line">    <span class="keyword">int</span> res;</span><br><span class="line"></span><br><span class="line">    bwr.write_size = len;</span><br><span class="line">    bwr.write_consumed = <span class="number">0</span>;</span><br><span class="line">    bwr.write_buffer = (<span class="keyword">uintptr_t</span>) data;<span class="comment">//data为BC_ENTER_LOOPER</span></span><br><span class="line">    bwr.read_size = <span class="number">0</span>;</span><br><span class="line">    bwr.read_consumed = <span class="number">0</span>;</span><br><span class="line">    bwr.read_buffer = <span class="number">0</span>;</span><br><span class="line">    res = <span class="built_in">ioctl</span>(bs-&gt;fd, BINDER_WRITE_READ, &amp;bwr);</span><br><span class="line">    <span class="keyword">if</span> (res &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr,<span class="string">&quot;binder_write: ioctl failed (%s)\n&quot;</span>,</span><br><span class="line">                <span class="built_in">strerror</span>(errno));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>bwr</code>上篇文章有提过用来与Binder驱动数据结构体<code>binder_write_read</code>，在<code>binder_write</code>中函数中对<code>bwr</code>进行赋值，再调用<code>ioctl</code>函数命令是<code>BINDER_WRITE_READ</code>将<code>bwr</code>中的数据发送给Binder驱动。</p>
+<p>svcmgr_handler函数</p>
+<blockquote>
+<p>frameworks/native/cmds/servicemanager/service_manager.c</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">svcmgr_handler</span><span class="params">(struct binder_state *bs,</span></span></span><br><span class="line"><span class="params"><span class="function">                   struct binder_transaction_data *txn,</span></span></span><br><span class="line"><span class="params"><span class="function">                   struct binder_io *msg,</span></span></span><br><span class="line"><span class="params"><span class="function">                   struct binder_io *reply)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">svcinfo</span> *<span class="title">si</span>;</span></span><br><span class="line">    <span class="keyword">uint16_t</span> *s;</span><br><span class="line">    <span class="keyword">size_t</span> len;</span><br><span class="line">    <span class="keyword">uint32_t</span> handle;</span><br><span class="line">    <span class="keyword">uint32_t</span> strict_policy;</span><br><span class="line">    <span class="keyword">int</span> allow_isolated;</span><br><span class="line">    <span class="keyword">uint32_t</span> dumpsys_priority;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (txn-&gt;target.ptr != BINDER_SERVICE_MANAGER)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (txn-&gt;code == PING_TRANSACTION)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    strict_policy = <span class="built_in">bio_get_uint32</span>(msg);</span><br><span class="line">    s = <span class="built_in">bio_get_string16</span>(msg, &amp;len);</span><br><span class="line">    <span class="keyword">if</span> (s == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((len != (<span class="built_in"><span class="keyword">sizeof</span></span>(svcmgr_id) / <span class="number">2</span>)) ||</span><br><span class="line">        <span class="built_in">memcmp</span>(svcmgr_id, s, <span class="built_in"><span class="keyword">sizeof</span></span>(svcmgr_id))) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr,<span class="string">&quot;invalid id %s\n&quot;</span>, <span class="built_in">str8</span>(s, len));</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sehandle &amp;&amp; <span class="built_in">selinux_status_updated</span>() &gt; <span class="number">0</span>) &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> VENDORSERVICEMANAGER</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">selabel_handle</span> *<span class="title">tmp_sehandle</span> =</span> <span class="built_in">selinux_android_vendor_service_context_handle</span>();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">selabel_handle</span> *<span class="title">tmp_sehandle</span> =</span> <span class="built_in">selinux_android_service_context_handle</span>();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">        <span class="keyword">if</span> (tmp_sehandle) &#123;</span><br><span class="line">            <span class="built_in">selabel_close</span>(sehandle);</span><br><span class="line">            sehandle = tmp_sehandle;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span>(txn-&gt;code) &#123;</span><br><span class="line">    <span class="keyword">case</span> SVC_MGR_GET_SERVICE:</span><br><span class="line">    <span class="keyword">case</span> SVC_MGR_CHECK_SERVICE:</span><br><span class="line">        s = <span class="built_in">bio_get_string16</span>(msg, &amp;len);</span><br><span class="line">        <span class="keyword">if</span> (s == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        handle = <span class="built_in">do_find_service</span>(s, len, txn-&gt;sender_euid, txn-&gt;sender_pid);</span><br><span class="line">        <span class="keyword">if</span> (!handle)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="built_in">bio_put_ref</span>(reply, handle);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SVC_MGR_ADD_SERVICE:</span><br><span class="line">        s = <span class="built_in">bio_get_string16</span>(msg, &amp;len);</span><br><span class="line">        <span class="keyword">if</span> (s == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        handle = <span class="built_in">bio_get_ref</span>(msg);</span><br><span class="line">        allow_isolated = <span class="built_in">bio_get_uint32</span>(msg) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">        dumpsys_priority = <span class="built_in">bio_get_uint32</span>(msg);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">do_add_service</span>(bs, s, len, handle, txn-&gt;sender_euid, allow_isolated, dumpsys_priority,</span><br><span class="line">                           txn-&gt;sender_pid))</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> SVC_MGR_LIST_SERVICES: &#123;</span><br><span class="line">        <span class="keyword">uint32_t</span> n = <span class="built_in">bio_get_uint32</span>(msg);</span><br><span class="line">        <span class="keyword">uint32_t</span> req_dumpsys_priority = <span class="built_in">bio_get_uint32</span>(msg);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">svc_can_list</span>(txn-&gt;sender_pid, txn-&gt;sender_euid)) &#123;</span><br><span class="line">            <span class="built_in">ALOGE</span>(<span class="string">&quot;list_service() uid=%d - PERMISSION DENIED\n&quot;</span>,</span><br><span class="line">                    txn-&gt;sender_euid);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        si = svclist;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (si) &#123;</span><br><span class="line">            <span class="keyword">if</span> (si-&gt;dumpsys_priority &amp; req_dumpsys_priority) &#123;</span><br><span class="line">                <span class="keyword">if</span> (n == <span class="number">0</span>) <span class="keyword">break</span>;</span><br><span class="line">                n--;</span><br><span class="line">            &#125;</span><br><span class="line">            si = si-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (si) &#123;</span><br><span class="line">            <span class="built_in">bio_put_string16</span>(reply, si-&gt;name);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">ALOGE</span>(<span class="string">&quot;unknown code %d\n&quot;</span>, txn-&gt;code);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">bio_put_uint32</span>(reply, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/01/07/%E6%B5%85%E6%9E%90Binder%E4%B9%8BServiceManager/" data-id="cky376id500060dvhbw4odi90" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/" rel="tag">Binder</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2021/12/30/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">浅析Binder之系统服务注册</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2022</li>
+      
+        <li>WU</li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/copybtn.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

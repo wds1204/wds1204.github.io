@@ -63,6 +63,71 @@
     <h1 class="page-type-title"></h1>
     
     
+    <article id="post-浅析Binder之获取系统服务" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/01/11/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/">浅析Binder之获取系统服务</a>
+</h2>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/01/11/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="article-date">
+  <time datetime="2022-01-11T15:00:12.000Z" itemprop="datePublished">2022-01-11</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/android/">android</a> / <a class="article-category-link" href="/categories/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">源码解析</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>继续以<code>MediaPlayerService</code>为例，学习系统服务的获取过程。该过程的内容分为两部分，客户端<code>MediaPlayerService</code>请求获取服务和服务端<code>ServiceManager</code>处理请求。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2022/01/11/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/01/11/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" data-id="ckybmhrrd000hxivhc18tdkan" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/" rel="tag">Binder</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
     <article id="post-浅析Binder之ServiceManager" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -101,7 +166,7 @@
         
       
       
-        <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的过去过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。</p>
+        <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的获取过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说到过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。所以首先要了解<code>ServiceManager</code>的启动过程，这样更有助于理解系统服务的注册过程和获取过程。</p>
         
           <p>
             <a class="article-more-link" href="/2022/01/07/%E6%B5%85%E6%9E%90Binder%E4%B9%8BServiceManager/">
@@ -112,7 +177,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/07/%E6%B5%85%E6%9E%90Binder%E4%B9%8BServiceManager/" data-id="ckya8lodm0006lfvh0bas4w8f" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/07/%E6%B5%85%E6%9E%90Binder%E4%B9%8BServiceManager/" data-id="ckybmhrrb000exivh6qm94j2l" class="article-share-link">
         分享
       </a>
       
@@ -177,7 +242,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/30/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="ckya8lodp0009lfvheuyndc2w" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/30/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="ckybmhrrc000fxivhb6xd4q1f" class="article-share-link">
         分享
       </a>
       
@@ -233,7 +298,7 @@
   <div class="article-gallery-photos">
     
     
-    <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_ckya8lodc0001lfvhg3g34qki">
+    <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_ckybmhrqu0001xivhfokh12v5">
       <img src="https://s2.loli.net/2021/12/22/IXpLoPCi57AHr3h.png" itemprop="image">
     </a>
     
@@ -254,7 +319,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="ckya8lodc0001lfvhg3g34qki" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="ckybmhrqu0001xivhfokh12v5" class="article-share-link">
         分享
       </a>
       
@@ -315,7 +380,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/22/hello-world/" data-id="ckya8lodi0003lfvh1yj009i6" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/22/hello-world/" data-id="ckybmhrr10003xivha37x4qcj" class="article-share-link">
         分享
       </a>
       

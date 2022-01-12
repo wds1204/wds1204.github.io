@@ -71,7 +71,7 @@
       
       
       
-      <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的过去过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。</p>
+      <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的获取过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说到过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。所以首先要了解<code>ServiceManager</code>的启动过程，这样更有助于理解系统服务的注册过程和获取过程。</p>
 <span id="more"></span>
 <h3 id="1-ServiceManager的入口函数"><a href="#1-ServiceManager的入口函数" class="headerlink" title="1. ServiceManager的入口函数"></a>1. ServiceManager的入口函数</h3><blockquote>
 <p>frameworks/native/cmds/servicemanager/service_manager.c</p>
@@ -112,11 +112,16 @@
 <p>在<code>binder_write</code>中函数中对<code>bwr</code>进行赋值，再调用<code>ioctl</code>函数命令是<code>BINDER_WRITE_READ</code>将<code>bwr</code>中的数据发送给Binder驱动，这里又进去内核Kernel Binder的代码。</p>
 <p>Kernel Binder内核binder.c的<a target="_blank" rel="noopener" href="https://android.googlesource.com/kernel/msm/+/android-msm-anthias-3.10-lollipop-mr1-wear-release/drivers/staging/android/binder.c">源码</a></p>
 <p><code>binder_ioctl</code>函数处理<code>BINDER_WRITE_READ</code>指令，会先通过<code>copy_from_user</code>函数将用户空间的<code>binder_write_read</code>数据复制并保存到内核数据<code>binder_write_read bwr</code>中。如果内核<code>binder_write_read</code>中的<code>write_size</code>输入有数据时，会调用<code>binder_thread_write</code>函数来处理<code>BC_ENTER_LOOPER</code>协议，其内部会将目标线程的状态设置为<code>BINDER_LOOPER_STATE_ENTHERED</code>,这个目标线程就是Binder线程。<br>然后会通过<code>copyto_user</code>函数将内核空间的数据bwr复制到用户空间。</p>
+<h3 id="2-ServiceManager的意义"><a href="#2-ServiceManager的意义" class="headerlink" title="2. ServiceManager的意义"></a>2. ServiceManager的意义</h3><ul>
+<li><code>ServiceManager</code>能集中管理系统的所有服务，它能施加全县控制，统一管理，比如并不是所有的进程都能注册服务</li>
+<li><code>ServiceManager</code>支持通过字符串查找对应的Service</li>
+<li>由于各种原因，<code>Service</code>进程可能生死无常。如果每个Client都去检测，那控制起来就很麻烦。现由<code>ServiceManager</code>通过管理，<code>Client</code>只需要查询<code>ServiceManager</code>，其他的无需管理。</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/07/%E6%B5%85%E6%9E%90Binder%E4%B9%8BServiceManager/" data-id="ckya8lodm0006lfvh0bas4w8f" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/07/%E6%B5%85%E6%9E%90Binder%E4%B9%8BServiceManager/" data-id="ckybmhrrb000exivh6qm94j2l" class="article-share-link">
         分享
       </a>
       
@@ -129,6 +134,15 @@
   
   
 <nav class="article-nav">
+  
+  <a href="/2022/01/11/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      浅析Binder之获取系统服务
+      
+    </div>
+  </a>
   
   
   <a href="/2021/12/30/%E6%B5%85%E6%9E%90Binder%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" class="article-nav-link">

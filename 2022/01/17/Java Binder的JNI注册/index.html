@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    Java Binder的JNI注册 |
+    
+    modi.wu
+  </title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-Java Binder的JNI注册" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h1 class="article-title" itemprop="name">
+  Java Binder的JNI注册
+</h1>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" class="article-date">
+  <time datetime="2022-01-17T13:33:14.000Z" itemprop="datePublished">2022-01-17</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/android/">android</a> / <a class="article-category-link" href="/categories/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">源码解析</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+      <p>在Binder机制的架构中，分为Java Binder和Native Binder。Java层的Binder可以说是Native层的Binder的镜像，而Java Binder这个镜像归根结底还是依赖Native Binder层的运转，那么Java Binder要和Native Binder肯定需要建立某种联系进行通信，这种联系就是通过JNI，</p>
+<span id="more"></span>
+
+<h3 id="初始化Java-Binder框架"><a href="#初始化Java-Binder框架" class="headerlink" title="初始化Java Binder框架"></a>初始化Java Binder框架</h3><p>JNI的注册是在Zygote进程启动过程中进行的，代码如下所示：</p>
+<blockquote>
+<p>frameworks/base/core/jni/AndroidRuntime.cpp</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AndroidRuntime::start</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* className, <span class="keyword">const</span> Vector&lt;String8&gt;&amp; options, <span class="keyword">bool</span> zygote)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* start the virtual machine */</span></span><br><span class="line">    JniInvocation jni_invocation;</span><br><span class="line">    jni_invocation.<span class="built_in">Init</span>(<span class="literal">NULL</span>);</span><br><span class="line">    JNIEnv* env;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">startVm</span>(&amp;mJavaVM, &amp;env, zygote) != <span class="number">0</span>) &#123;<span class="comment">//1 开启java 虚拟机</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">onVmCreated</span>(env);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * Register android functions.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">startReg</span>(env) &lt; <span class="number">0</span>) &#123;<span class="comment">//注册Android 函数</span></span><br><span class="line">        <span class="built_in">ALOGE</span>(<span class="string">&quot;Unable to register all android natives\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在注释1出开启Java虚拟机，并在注释2出调用<code>startReg</code>注册android JNI 函数。进入到<code>startReg</code>函数内看看到底是如何完成JNI的注册的。</p>
+<blockquote>
+<p>frameworks/base/core/jni/AndroidRuntime.cpp</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Register android native functions with the VM.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/*static*/</span> <span class="function"><span class="keyword">int</span> <span class="title">AndroidRuntime::startReg</span><span class="params">(JNIEnv* env)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">ATRACE_NAME</span>(<span class="string">&quot;RegisterAndroidNatives&quot;</span>);</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * This hook causes all future threads created in this process to be</span></span><br><span class="line"><span class="comment">     * attached to the JavaVM.  (This needs to go away in favor of JNI</span></span><br><span class="line"><span class="comment">     * Attach calls.)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="built_in">androidSetCreateThreadFunc</span>((android_create_thread_fn) javaCreateThreadEtc);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">ALOGV</span>(<span class="string">&quot;--- registering native functions ---\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * Every &quot;register&quot; function calls one or more things that return</span></span><br><span class="line"><span class="comment">     * a local reference (e.g. FindClass).  Because we haven&#x27;t really</span></span><br><span class="line"><span class="comment">     * started the VM yet, they&#x27;re all getting stored in the base frame</span></span><br><span class="line"><span class="comment">     * and never released.  Use Push/Pop to manage the storage.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    env-&gt;<span class="built_in">PushLocalFrame</span>(<span class="number">200</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">register_jni_procs</span>(gRegJNI, <span class="built_in">NELEM</span>(gRegJNI), env) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        env-&gt;<span class="built_in">PopLocalFrame</span>(<span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    env-&gt;<span class="built_in">PopLocalFrame</span>(<span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//createJavaThread(&quot;fubar&quot;, quickTest, (void*) &quot;hello&quot;);</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数的注释说明的很清楚，向虚拟机注册android native函数，通过<code>register_jni_procs</code>函数循环的调用<code>gRegJNI</code>数组的数组所对应的方法，如下所示：</p>
+<blockquote>
+<p>frameworks/base/core/jni/AndroidRuntime.cpp</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">register_jni_procs</span><span class="params">(<span class="keyword">const</span> RegJNIRec array[], <span class="keyword">size_t</span> count, JNIEnv* env)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (array[i].<span class="built_in">mProc</span>(env) &lt; <span class="number">0</span>) &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> NDEBUG</span></span><br><span class="line">            <span class="built_in">ALOGD</span>(<span class="string">&quot;----------!!! %s failed to load\n&quot;</span>, array[i].mName);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>gRegJNI</code>数组有一百多个成员变量，只截取Binder相关的类：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> RegJNIRec gRegJNI[] = &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="built_in">REG_JNI</span>(register_android_os_Binder),</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>REG_JNI</code>是个宏定义：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REG_JNI(name)      &#123; name &#125;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">RegJNIRec</span> &#123;</span></span><br><span class="line">    <span class="built_in"><span class="keyword">int</span></span> (*mProc)(JNIEnv*);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>展开后其实就是调用参数名所对应的函数。所以负责<code>Java Binder</code>和<code>Native Binder</code>通信的函数为<code>register_android_os_Binder</code>,代码如下：</p>
+<blockquote>
+<p>frameworks/base/core/jni/android_util_Binder.cpp</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">register_android_os_Binder</span><span class="params">(JNIEnv* env)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">int_register_android_os_Binder</span>(env) &lt; <span class="number">0</span>)<span class="comment">//注册Binder类</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">int_register_android_os_BinderInternal</span>(env) &lt; <span class="number">0</span>)<span class="comment">//注册BonderInternal类</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">int_register_android_os_BinderProxy</span>(env) &lt; <span class="number">0</span>)<span class="comment">//注册BinderPorxy类</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>register_android_os_Binder</code>函数有三个作用：注册Binder类、注册BonderInternal类和注册BinderPorxy类，它们是Java Binder中的关联类。</p>
+<h4 id="1-Binder类的初始化"><a href="#1-Binder类的初始化" class="headerlink" title="1- Binder类的初始化"></a>1- Binder类的初始化</h4><p>调用<code>int_register_android_os_Binder</code>函数完成Binder累的初始化工作,代码如下：</p>
+<blockquote>
+<p>frameworks/base/core/jni/android_util_Binder.cpp</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> kBinderPathName = <span class="string">&quot;android/os/Binder&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">int_register_android_os_Binder</span><span class="params">(JNIEnv* env)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//kBinderPathName为Java层中Binder类的全路径名：</span></span><br><span class="line">    jclass clazz = <span class="built_in">FindClassOrDie</span>(env, kBinderPathName);</span><br><span class="line">    <span class="comment">//gBinderOffsets是一个静态类对象，用来保存Binder类的一些JNI层中使用的信息</span></span><br><span class="line">    gBinderOffsets.mClass = <span class="built_in">MakeGlobalRefOrDie</span>(env, clazz);</span><br><span class="line">    <span class="comment">//比如Binder类的execTransact函数的methodID</span></span><br><span class="line">    gBinderOffsets.mExecTransact = <span class="built_in">GetMethodIDOrDie</span>(env, clazz, <span class="string">&quot;execTransact&quot;</span>, <span class="string">&quot;(IJJI)Z&quot;</span>);</span><br><span class="line">    <span class="comment">//比如Binder类的mObject函数的fileID</span></span><br><span class="line">    gBinderOffsets.mObject = <span class="built_in">GetFieldIDOrDie</span>(env, clazz, <span class="string">&quot;mObject&quot;</span>, <span class="string">&quot;J&quot;</span>);</span><br><span class="line">    <span class="comment">//注册Binder类中native函数的实现</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">RegisterMethodsOrDie</span>(</span><br><span class="line">        env, kBinderPathName,</span><br><span class="line">        gBinderMethods, <span class="built_in">NELEM</span>(gBinderMethods));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>gBinderOffsets</code>的定义如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">bindernative_offsets_t</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// Class state.</span></span><br><span class="line">    jclass mClass;</span><br><span class="line">    jmethodID mExecTransact;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Object state.</span></span><br><span class="line">    jfieldID mObject;</span><br><span class="line"></span><br><span class="line">&#125; gBinderOffsets;</span><br></pre></td></tr></table></figure>
+<p>由<code>int_register_android_os_Binder</code>函数可知，使用<code>gBinderOffsets</code>对象保存Binder类的函数和成员变量，那日后将可用来在JNI层对Java层的Binder对象进行操作。在<code>int_register_android_os_Binder</code>函数最后一行通过<code>RegisterMethodsOrDie</code>函数注册<code>gBinderMethods</code>定义的函数，其中<code>gBinderMethods</code>是<code>JNINativeMehtod</code>类型的数组,存储了Jave 层Binder的Native方法和JNI层函数的对应关系，如果不是很清楚JNI的机制，可自行查阅。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> JNINativeMethod gBinderMethods[] = &#123;</span><br><span class="line">     <span class="comment">/* name, signature, funcPtr */</span></span><br><span class="line">    &#123; <span class="string">&quot;getCallingPid&quot;</span>, <span class="string">&quot;()I&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_getCallingPid &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;getCallingUid&quot;</span>, <span class="string">&quot;()I&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_getCallingUid &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;clearCallingIdentity&quot;</span>, <span class="string">&quot;()J&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_clearCallingIdentity &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;restoreCallingIdentity&quot;</span>, <span class="string">&quot;(J)V&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_restoreCallingIdentity &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;setThreadStrictModePolicy&quot;</span>, <span class="string">&quot;(I)V&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_setThreadStrictModePolicy &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;getThreadStrictModePolicy&quot;</span>, <span class="string">&quot;()I&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_getThreadStrictModePolicy &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;flushPendingCommands&quot;</span>, <span class="string">&quot;()V&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_flushPendingCommands &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;getNativeBBinderHolder&quot;</span>, <span class="string">&quot;()J&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_getNativeBBinderHolder &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;getNativeFinalizer&quot;</span>, <span class="string">&quot;()J&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_getNativeFinalizer &#125;,</span><br><span class="line">    &#123; <span class="string">&quot;blockUntilThreadAvailable&quot;</span>, <span class="string">&quot;()V&quot;</span>, (<span class="keyword">void</span>*)android_os_Binder_blockUntilThreadAvailable &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="2-BinderInternal类的初始化"><a href="#2-BinderInternal类的初始化" class="headerlink" title="2- BinderInternal类的初始化"></a>2- BinderInternal类的初始化</h4><p>调用<code>int_register_android_os_BinderInternal</code>函数来完成BinderInternal类的初始化，代码如下：</p>
+<blockquote>
+<p>frameworks/base/core/jni/android_util_Binder.cpp</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> kBinderInternalPathName = <span class="string">&quot;com/android/internal/os/BinderInternal&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">int_register_android_os_BinderInternal</span><span class="params">(JNIEnv* env)</span></span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    <span class="comment">//kBinderInternalPathName为BinderInternal类全路径</span></span><br><span class="line">    jclass clazz = <span class="built_in">FindClassOrDie</span>(env, kBinderInternalPathName);</span><br><span class="line">    <span class="comment">//gBinderInternalOffsets用来保存BinderInternal类的一些信息</span></span><br><span class="line">    gBinderInternalOffsets.mClass = <span class="built_in">MakeGlobalRefOrDie</span>(env, clazz);</span><br><span class="line">    <span class="comment">//获取BinderInternal类forceBinderGc方法methodId</span></span><br><span class="line">    gBinderInternalOffsets.mForceGc = <span class="built_in">GetStaticMethodIDOrDie</span>(env, clazz, <span class="string">&quot;forceBinderGc&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">    <span class="comment">//获取BinderInternal类fbinderProxyLimitCallbackFromNative方法methodId</span></span><br><span class="line">    gBinderInternalOffsets.mProxyLimitCallback = <span class="built_in">GetStaticMethodIDOrDie</span>(env, clazz, <span class="string">&quot;binderProxyLimitCallbackFromNative&quot;</span>, <span class="string">&quot;(I)V&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//存放SparseIntArray类相关信息</span></span><br><span class="line">    jclass SparseIntArrayClass = <span class="built_in">FindClassOrDie</span>(env, <span class="string">&quot;android/util/SparseIntArray&quot;</span>);</span><br><span class="line">    gSparseIntArrayOffsets.classObject = <span class="built_in">MakeGlobalRefOrDie</span>(env, SparseIntArrayClass);</span><br><span class="line">    gSparseIntArrayOffsets.constructor = <span class="built_in">GetMethodIDOrDie</span>(env, gSparseIntArrayOffsets.classObject,</span><br><span class="line">                                                           <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">    gSparseIntArrayOffsets.put = <span class="built_in">GetMethodIDOrDie</span>(env, gSparseIntArrayOffsets.classObject, <span class="string">&quot;put&quot;</span>,</span><br><span class="line">                                                   <span class="string">&quot;(II)V&quot;</span>);</span><br><span class="line"></span><br><span class="line">    BpBinder::<span class="built_in">setLimitCallback</span>(android_os_BinderInternal_proxyLimitcallback);</span><br><span class="line">    <span class="comment">//注册BinderInternal类中的Native方法</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">RegisterMethodsOrDie</span>(</span><br><span class="line">        env, kBinderInternalPathName,</span><br><span class="line">        gBinderInternalMethods, <span class="built_in">NELEM</span>(gBinderInternalMethods));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和<code>BinderInternal</code>类初始化类似，只不过是保存在<code>gBinderInternalOffsets</code>结构体中，函数的最后一行也是注册<code>BinderInternal</code>类中的<code>Native</code>方法。</p>
+<h4 id="3-BinderProxy类的初始化"><a href="#3-BinderProxy类的初始化" class="headerlink" title="3- BinderProxy类的初始化"></a>3- BinderProxy类的初始化</h4><p>调用<code>int_register_android_os_BinderProxy</code>函数完成<code>BinderProxy</code>的初始化，代码如下所示：</p>
+<blockquote>
+<p>frameworks/base/core/jni/android_util_Binder.cpp</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> kBinderProxyPathName = <span class="string">&quot;android/os/BinderProxy&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">int_register_android_os_BinderProxy</span><span class="params">(JNIEnv* env)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    jclass clazz = <span class="built_in">FindClassOrDie</span>(env, <span class="string">&quot;java/lang/Error&quot;</span>);</span><br><span class="line">    gErrorOffsets.mClass = <span class="built_in">MakeGlobalRefOrDie</span>(env, clazz);</span><br><span class="line">    <span class="comment">//kBinderProxyPathName BinderProxy类的全路径名</span></span><br><span class="line">    clazz = <span class="built_in">FindClassOrDie</span>(env, kBinderProxyPathName);</span><br><span class="line">    <span class="comment">//gBinderProxyOffsets用来存储BinderProxy类的一些信息</span></span><br><span class="line">    gBinderProxyOffsets.mClass = <span class="built_in">MakeGlobalRefOrDie</span>(env, clazz);</span><br><span class="line">    <span class="comment">//获取BinderProxy类的getInstance函数methodID</span></span><br><span class="line">    gBinderProxyOffsets.mGetInstance = <span class="built_in">GetStaticMethodIDOrDie</span>(env, clazz, <span class="string">&quot;getInstance&quot;</span>,</span><br><span class="line">            <span class="string">&quot;(JJ)Landroid/os/BinderProxy;&quot;</span>);</span><br><span class="line">    <span class="comment">// 获取BinderProxy类的sendDeathNotice函数methodID</span></span><br><span class="line">    gBinderProxyOffsets.mSendDeathNotice = <span class="built_in">GetStaticMethodIDOrDie</span>(env, clazz, <span class="string">&quot;sendDeathNotice&quot;</span>,</span><br><span class="line">            <span class="string">&quot;(Landroid/os/IBinder$DeathRecipient;)V&quot;</span>);</span><br><span class="line">     <span class="comment">// 获取BinderProxy类的dumpProxyDebugInfo函数methodID</span></span><br><span class="line">    gBinderProxyOffsets.mDumpProxyDebugInfo = <span class="built_in">GetStaticMethodIDOrDie</span>(env, clazz, <span class="string">&quot;dumpProxyDebugInfo&quot;</span>,</span><br><span class="line">            <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">    <span class="comment">//获取BinderProxy类的mNativeData成员变量的fileID</span></span><br><span class="line">    gBinderProxyOffsets.mNativeData = <span class="built_in">GetFieldIDOrDie</span>(env, clazz, <span class="string">&quot;mNativeData&quot;</span>, <span class="string">&quot;J&quot;</span>);</span><br><span class="line"></span><br><span class="line">    clazz = <span class="built_in">FindClassOrDie</span>(env, <span class="string">&quot;java/lang/Class&quot;</span>);</span><br><span class="line">    gClassOffsets.mGetName = <span class="built_in">GetMethodIDOrDie</span>(env, clazz, <span class="string">&quot;getName&quot;</span>, <span class="string">&quot;()Ljava/lang/String;&quot;</span>);</span><br><span class="line">    <span class="comment">//注册BinderProxy类中的Native函数</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">RegisterMethodsOrDie</span>(</span><br><span class="line">        env, kBinderProxyPathName,</span><br><span class="line">        gBinderProxyMethods, <span class="built_in">NELEM</span>(gBinderProxyMethods));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>BinderProxy</code>类的初始化，<code>gBinderProxyOffsets</code>结构体中保存了<code>BinderProxy</code>类的相关信息。</p>
+<p>到这里Java Binder几个重要成员的初始化都已完成，同时在代码定义了几个全局的静态变量对象，分别是<code>gBinderOffsets</code>、<code>gBinderInternalOffsets</code>和<code>gBinderProxyOffsets</code>。</p>
+<p>框架的初始化过程就是获取了一些JNI层需要使用的信息，比如类成员函数的<code>methodID</code>、类成员变量的<code>fileID</code>。之所以这么处理是避免以后每次使用Binder的时候都需要频繁的调用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" data-id="ckyix405p0001h7vh4rln4w6k" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/" rel="tag">Binder</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2022/01/11/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">Native Binder机制之获取系统服务</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2022</li>
+      
+        <li>WU</li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/copybtn.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

@@ -63,6 +63,71 @@
     <h1 class="page-type-title"></h1>
     
     
+    <article id="java-Java Binder中系统服务的注册" class="article article-type-java" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/01/18/Java%20Binder%E4%B8%AD%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%B3%A8%E5%86%8C/">Java Binder中系统服务的注册</a>
+</h2>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/01/18/Java%20Binder%E4%B8%AD%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%B3%A8%E5%86%8C/" class="article-date">
+  <time datetime="2022-01-18T13:52:20.000Z" itemprop="datePublished">2022-01-18</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/android/">android</a> / <a class="article-category-link" href="/categories/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">源码解析</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>在Native Binder的系统服务注册过程中，核心是<code>ServiceManager</code>,在Java Binder中，也有一个<code>ServiceManager</code>，然而这个<code>ServiceManager</code>是个Java文件。在Java Binder注册系统服务到也需要用到<code>ServiceManager</code>，那么需要选择一个系统服务来窥探这一过程，这里以常见的<code>ActivityManagerServcie</code>（AMS）为例。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2022/01/18/Java%20Binder%E4%B8%AD%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%B3%A8%E5%86%8C/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/01/18/Java%20Binder%E4%B8%AD%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%B3%A8%E5%86%8C/" data-id="ckykc0c9e0002vzvhartm3z71" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/" rel="tag">Binder</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
     <article id="post-Java Binder的JNI注册" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -112,7 +177,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" data-id="ckyix405p0001h7vh4rln4w6k" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" data-id="ckykc0c9h0004vzvh771q64nf" class="article-share-link">
         分享
       </a>
       
@@ -177,7 +242,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/11/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" data-id="ckyix405z0009h7vhbd4v92ic" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/11/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" data-id="ckykc0c9p000evzvh4o1xbou5" class="article-share-link">
         分享
       </a>
       
@@ -242,7 +307,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" data-id="ckyix405t0003h7vhfdov174d" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" data-id="ckykc0c9k0007vzvhgfpl070a" class="article-share-link">
         分享
       </a>
       
@@ -307,7 +372,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="ckyix405w0006h7vh0svl45a5" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="ckykc0c9m0009vzvhdwv83eeb" class="article-share-link">
         分享
       </a>
       
@@ -363,7 +428,7 @@
   <div class="article-gallery-photos">
     
     
-    <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_ckyix4060000ah7vha4k514qd">
+    <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_ckykc0c9n000avzvhhwdt6wvf">
       <img src="https://s2.loli.net/2021/12/22/IXpLoPCi57AHr3h.png" itemprop="image">
     </a>
     
@@ -384,7 +449,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="ckyix4060000ah7vha4k514qd" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="ckykc0c9n000avzvhhwdt6wvf" class="article-share-link">
         分享
       </a>
       
@@ -445,7 +510,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/22/hello-world/" data-id="ckyix4063000eh7vh4uo65kkm" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/22/hello-world/" data-id="ckykc0c9r000gvzvh2nbb0oyr" class="article-share-link">
         分享
       </a>
       

@@ -215,7 +215,7 @@
 </blockquote>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IPCThreadState::<span class="built_in">IPCThreadState</span>()</span><br><span class="line">    : <span class="built_in">mProcess</span>(ProcessState::<span class="built_in">self</span>()),</span><br><span class="line">      <span class="built_in">mStrictModePolicy</span>(<span class="number">0</span>),</span><br><span class="line">      <span class="built_in">mLastTransactionBinderFlags</span>(<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">pthread_setspecific</span>(gTLS, <span class="keyword">this</span>);<span class="comment">//果不其然</span></span><br><span class="line">    <span class="built_in">clearCaller</span>();</span><br><span class="line">    mIn.<span class="built_in">setDataCapacity</span>(<span class="number">256</span>);<span class="comment">//mIn接收来自Binder驱动的数据</span></span><br><span class="line">    mOut.<span class="built_in">setDataCapacity</span>(<span class="number">256</span>);<span class="comment">//存放发往Binder驱动的数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>果真如期望那样，会调用<code>pthread_setspecific</code>,把自身设置到线程本地存储器中。每个<code>IPCThreadState</code>中都有一个mIn、一个mOut,类型都为<code>Parcel</code>。其中mIn用来接收来自Binder驱动的数据，而mOut用来存放发往Binder驱动的数据。默认大小都是256个字节。</p>
-<h3 id="transact"><a href="#transact" class="headerlink" title="transact"></a>transact</h3><p>传输工作是很费力，我们刚刚看到了<code>BpBinder</code>的<code>transact</code>调用的时<code>IPCThreadState</code>的<code>transact</code>函数，而此函数才是真正产生了与Binder通行的工作。  </p>
+<h3 id="4-2-transact"><a href="#4-2-transact" class="headerlink" title="4.2-transact"></a>4.2-transact</h3><p>传输工作是很费力，我们刚刚看到了<code>BpBinder</code>的<code>transact</code>调用的时<code>IPCThreadState</code>的<code>transact</code>函数，而此函数才是真正产生了与Binder通行的工作。  </p>
 <blockquote>
 <p>frameworks/native/libs/binder/IPCThreadState.cpp</p>
 </blockquote>
@@ -249,7 +249,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="ckykc0c9m0009vzvhdwv83eeb" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="ckyq6btni0006abvh7q873ur8" class="article-share-link">
         分享
       </a>
       

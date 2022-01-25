@@ -217,11 +217,17 @@
 <li>子类的onTransact函数将业务又分派个其子类来完成</li>
 </ul>
 <p><img src="/../images/AMS%E5%93%8D%E5%BA%94%E8%AF%B7%E6%B1%82%E7%9A%84%E8%BF%87%E7%A8%8B.png" alt="AMS响应请求过程"><br>PS：上图中虚线表示调用子类重载的方法<br>通过这种方式,来自客户端的请求就能传递到正确的Java Binder对象。</p>
+<h3 id="3-Java层Binder架构总结"><a href="#3-Java层Binder架构总结" class="headerlink" title="3-Java层Binder架构总结"></a>3-Java层Binder架构总结</h3><p>Java层Binder架构简图如下所示：<br><img src="/../images/Java%E5%B1%82Binder%E6%9E%B6%E6%9E%84.png" alt="Java层Binder架构"></p>
+<ol>
+<li><code>BinderProxy</code>代表客户端，Java层<code>BinderProxy</code>在Native层对应着<code>BpBinder</code>。凡事从Java层发出的请求，先是从Java层<code>BinderProxy</code>传递给Native层的<code>BpBinder</code>，由<code>BpBinder</code>将请求发送给Binder驱动</li>
+<li><code>Binder</code>代表服务端,<code>JavaBBinder</code>继承<code>BBinder</code>,<code>JavaBBinder</code>通过mObject指向Java层的<code>Binder</code>,<code>JavaBBinder</code>起到一个中转的作用，将来之客户端的请求从Native层传递到Java层。</li>
+<li>在整个系统中只有一个服务关键<code>ServiceManager</code></li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/18/Java%20Binder%E8%A7%A3%E6%9E%90/" data-id="ckyu8472k000328vhb5mx8hdm" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/18/Java%20Binder%E8%A7%A3%E6%9E%90/" data-id="ckyubldpx00066fvh4vwta3os" class="article-share-link">
         分享
       </a>
       

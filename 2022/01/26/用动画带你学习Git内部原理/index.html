@@ -80,28 +80,23 @@
 <li>某个commit上会有一些branch指向它们，这些branch的本质是引用;</li>
 <li>有一个特殊的引用叫做HEAD，它始终指向当前的位置，这个位置可以是commit，也可以是branch</li>
 </ul>
-<p>在上面提到了三个概念:<strong><em>commit__、__branch__、__HEAD</em></strong></p>
+<p>在上面提到了三个概念:<strong>commit、branch、HEAD</strong></p>
 <h4 id="commit"><a href="#commit" class="headerlink" title="commit:"></a>commit:</h4><ul>
-<li><p>表示对上一次改动的提交，它可以代表当前时刻下Git仓库的完整快照，但本质上，commit只是记录了距离上一次commit之间的改动。</p>
-</li>
-<li><p>git会根据提交的对象、作者和日期会生成一串很长哈希值（每个提交还包含上一个提交的hash值)，这个哈希值是不能更改的，可以用它表示你的每一次提交。</p>
-<h4 id="branch"><a href="#branch" class="headerlink" title="branch"></a>branch</h4></li>
-<li><p>分支，指的是长裤结构出现分叉时不同的叉，本质上git的branch是引用(reference),指向某个commit的指针。</p>
-</li>
-<li><p>master 是一个特殊的 branch，因为它是 Git 的默认 branch(默认 branch 可 以修改)。默认 branch 的特点:</p>
-<ul>
+<li>表示对上一次改动的提交，它可以代表当前时刻下Git仓库的完整快照，但本质上，commit只是记录了距离上一次commit之间的改动。</li>
+<li>git会根据提交的对象、作者和日期会生成一串很长哈希值（每个提交还包含上一个提交的hash值)，这个哈希值是不能更改的，可以用它表示你的每一次提交。<h4 id="branch"><a href="#branch" class="headerlink" title="branch"></a>branch</h4></li>
+<li>分支，指的是长裤结构出现分叉时不同的叉，本质上git的branch是引用(reference),指向某个commit的指针。</li>
+<li>master 是一个特殊的 branch，因为它是 Git 的默认 branch(默认 branch 可 以修改)。</li>
+<li>默认 branch 的特点:<ul>
 <li>执行 clone 方法把仓库取到本地的时候，默认 checkout 出来的是默认branch，即 master;</li>
 <li>在执行 push 命令把本地内容推送到远端仓库的时候，远端仓库的 HEAD 永 远跟随默认 branch，而不是和本地 HEAD 同步。换句话说，只有 push master 分支到远端的时候，远端的 HEAD 才会移动。<h4 id="HEAD"><a href="#HEAD" class="headerlink" title="HEAD"></a>HEAD</h4></li>
 </ul>
 </li>
-<li><p>也是引用，但它不是 branch，它代表了当前所处的位置。HEAD 不仅可以指向某个 commit，也可以指向某个 branch(例如 master、feature1) </p>
-</li>
-<li><p>当每次 commit 的时候，HEAD 不仅随着新的 commit 一起移动，而且如果它指向了某个 branch，那么它也会带着 branch 一起移动</p>
-</li>
+<li>也是引用，但它不是 branch，它代表了当前所处的位置。HEAD 不仅可以指向某个 commit，也可以指向某个 branch(例如 master、feature1) </li>
+<li>当每次 commit 的时候，HEAD 不仅随着新的 commit 一起移动，而且如果它指向了某个 branch，那么它也会带着 branch 一起移动</li>
 </ul>
 <p>​</p>
 <h2 id="Git通常用命令"><a href="#Git通常用命令" class="headerlink" title="Git通常用命令"></a>Git通常用命令</h2><p>了解完几个常用的概念后 ，我们开始探究一下开发中常用命令背后具体的操作：Commit、Checkout、Merge、Rebase、Reset、Cherry-Pick</p>
-<h3 id="Commit"><a href="#Commit" class="headerlink" title="Commit"></a>Commit</h3><p>当修改或增加完某个文件，我们先_git add_ 操作把内容提交到暂存区，再通过_git commit_ 命令将暂存区内容添加到本地仓库中。上面提到git会根据提交的内容生成一串hash值，而_commit_具体的过程是在HEAD指向的_commit_后面追加你新提交的_commit。_        </p>
+<h3 id="Commit"><a href="#Commit" class="headerlink" title="Commit"></a>Commit</h3><p>当修改或增加完某个文件，我们先_git add_ 操作把内容提交到暂存区，再通过<code>git commit</code>命令将暂存区内容添加到本地仓库中。上面提到git会根据提交的内容生成一串hash值，而<code>commit</code>具体的过程是在HEAD指向的_commit_后面追加你新提交的<code>commit</code>。        </p>
 <blockquote>
 <p>git commit -m “提交信息”       </p>
 </blockquote>
@@ -159,7 +154,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="ckyvsukb200176fvh3qy4ag1a" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="ckyvt1dkw000rd8vh0tlkce3q" class="article-share-link">
         分享
       </a>
       

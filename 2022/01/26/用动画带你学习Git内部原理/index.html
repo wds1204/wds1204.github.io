@@ -74,7 +74,7 @@
       <p>Git已经是我们日常工作开发中最常用到的分布式版本控制系统，大部分人也都知道如何使用它，知道有哪些命令。但同样很多人都在git操作中摔过跟头、翻过车，往往都是通过在网上搜索一番，按照搜索结果敲下命令，或许能解决或许不能。之所以这样，是因为你并不了解每个命令背后的原理，如果了解其本质，就可以更好的帮你梳理思路，而不会迷失在Git众多命令和参数上。这篇文章的目的是用“可视化”动画的形讲解日常开发中常用的命令，让你更好的了解Git的本质。</p>
 <span id="more"></span>
 
-<h3 id="Git仓库数据结构"><a href="#Git仓库数据结构" class="headerlink" title="Git仓库数据结构"></a>Git仓库数据结构</h3><p>在开始之前，需要对Git有个大体的结构的认知–Git仓库的数据结构，如下图所示<br><img src="https://cdn.nlark.com/yuque/0/2021/png/1242336/1621306654171-0e6ad844-d71b-45c7-9f7c-13ad1d15e69c.png#height=354&id=ygmLP&margin=%5Bobject%20Object%5D&name=image.png&originHeight=354&originWidth=901&originalType=binary&ratio=1&size=26764&status=done&style=none&width=901" alt="image.png"></p>
+<h3 id="Git仓库数据结构"><a href="#Git仓库数据结构" class="headerlink" title="Git仓库数据结构"></a>Git仓库数据结构</h3><p>在开始之前，需要对Git有个大体的结构的认知–Git仓库的数据结构，如下图所示<br><img src="/../images/git/git%E7%BB%93%E6%9E%84.png" alt="image.png"></p>
 <ul>
 <li>Git仓库由一个个的commit组成;</li>
 <li>某个commit上会有一些branch指向它们，这些branch的本质是引用;</li>
@@ -105,22 +105,22 @@
 <blockquote>
 <p>git commit -m “提交信息”       </p>
 </blockquote>
-<p><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621501017560-ae51c6c7-fa6e-462d-9d3a-95bc64f7ead6.gif#height=270&id=CCnPb&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20git%20commit.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=252070&status=done&style=none&width=480" alt="git 效果动画 git commit.gif">       </p>
+<p><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20git%20commit.gif" alt="git 效果动画 git commit.gif">       </p>
 <h3 id="Checkout"><a href="#Checkout" class="headerlink" title="Checkout"></a>Checkout</h3><h4 id="checkout-branch"><a href="#checkout-branch" class="headerlink" title="checkout branch"></a>checkout branch</h4><p>在需求开发的过程中，往往需要在不同的分支上来回切换，Checkout 最常见的功能也就是切换分支，你只需运行如下命令：</p>
 <blockquote>
 <p> git chekcout <branch></p>
 </blockquote>
-<p>Git会把HEAD引用切换到你需要的分支上，发生如下操作：​<br><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440610806-2e2ed889-3345-4c9f-838a-c659240cdb92.gif#height=270&id=q4bDw&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20checkout%20branch.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=187399&status=done&style=none&width=480" alt="git 效果动画 checkout branch.gif"><br>HEAD引用从原先master分支切换到feature1分支上，这样你就完成了分支切换的操作。<br>​</p>
+<p>Git会把HEAD引用切换到你需要的分支上，发生如下操作：​<br><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20checkout%20branch.gif" alt="git 效果动画 checkout branch.gif"><br>HEAD引用从原先master分支切换到feature1分支上，这样你就完成了分支切换的操作。<br>​</p>
 <h4 id="checkout-commit"><a href="#checkout-commit" class="headerlink" title="checkout commit"></a>checkout commit</h4><p>除了常见的分支切换，checkout还能切换指定的commit，同样也是HEAD引用的移动，只是HEAD指向是commit​</p>
 <blockquote>
 <p>git chekcout <commit></p>
 </blockquote>
-<p><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440597575-26210506-5390-4ddb-be81-40c211b7c36d.gif#height=270&id=L6lvs&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20checkout%20commit.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=193493&status=done&style=none&width=480" alt="git 效果动画 checkout commit.gif"><br>这个命令是个只读操作，切换到某个commit后，它可以查看旧版本的文件，也可以修改任意的提交，但当你切回分支后，这时候你之前做的任何提交相当于放弃掉。如果你想保留之前创建的提交，可以在没切走之前创建一个新的分支来可以保留之前所创建的提交。</p>
+<p><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20checkout%20commit.gif" alt="git 效果动画 checkout commit.gif"><br>这个命令是个只读操作，切换到某个commit后，它可以查看旧版本的文件，也可以修改任意的提交，但当你切回分支后，这时候你之前做的任何提交相当于放弃掉。如果你想保留之前创建的提交，可以在没切走之前创建一个新的分支来可以保留之前所创建的提交。</p>
 <h3 id="Merging"><a href="#Merging" class="headerlink" title="Merging"></a>Merging</h3><p>在开发中创建多个分支是必要的，以使每个新变更彼此分离，并确保你不会意外将未经批准或破损的变更推到生产分支上。但要将更改从一个分支转移到另一个分支上，有一种方法是执行git merge！ Git可以执行两种类型的合并：快进(fast-forward)或无快进(no-fast-forward)</p>
-<h4 id="Fast-forward-ff"><a href="#Fast-forward-ff" class="headerlink" title="Fast-forward (--ff)"></a>Fast-forward (<code>--ff</code>)</h4><p>当前分支与我们要合并的分支相比没有额外的提交时，可能会发生快速合并。 Git首先会尝试执行最简单的选择：快进！此类合并不会创建新的提交，而是会在我们当前要合并的分支中合并这些提交。<br><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440637674-f71f5a89-9e27-46e8-9cdd-758e07d2a7ec.gif#height=270&id=gLGGX&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20merge%20-ff.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=187572&status=done&style=none&width=480" alt="git 效果动画 merge -ff.gif"><br>我们可以在master分支上获得在feature1分支上所做的所有更改。那么什么是<strong>no-fast-forward</strong>的呢？</p>
-<h4 id="No-fast-foward-no-ff"><a href="#No-fast-foward-no-ff" class="headerlink" title="No-fast-foward (--no-ff)"></a>No-fast-foward (<code>--no-ff</code>)</h4><p>如果当前的分支与你要合并的分支相比没有任何额外的提交，那就太好了，但是不幸的是，这种情况很少！如果需要合并的分支和你当前分支都做了改动，则git将执行no-fast-forward合并。使用无快进合并，Git在活动分支上创建一个新的合并提交，提交的父提交既指向当前分支又指向我们要合并的分支！<br><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440649891-116d5266-c139-4afa-97ce-bd443e1cc049.gif#height=270&id=ePqMB&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20merge%20no%20--ff.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=379754&status=done&style=none&width=480" alt="git 效果动画 merge no --ff.gif"><br>建议：每次合并的时候最好加上参数 –no-ff。因为主干分支往往都是比较稳定的代码，feature开发分支的许多提交都是零碎的，快进式合并代码会把feature开发分支的提交历史混入到主干分支上。</p>
+<h4 id="Fast-forward-ff"><a href="#Fast-forward-ff" class="headerlink" title="Fast-forward (--ff)"></a>Fast-forward (<code>--ff</code>)</h4><p>当前分支与我们要合并的分支相比没有额外的提交时，可能会发生快速合并。 Git首先会尝试执行最简单的选择：快进！此类合并不会创建新的提交，而是会在我们当前要合并的分支中合并这些提交。<br><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20merge%20-ff.gif" alt="git 效果动画 merge -ff.gif"><br>我们可以在master分支上获得在feature1分支上所做的所有更改。那么什么是<strong>no-fast-forward</strong>的呢？</p>
+<h4 id="No-fast-foward-no-ff"><a href="#No-fast-foward-no-ff" class="headerlink" title="No-fast-foward (--no-ff)"></a>No-fast-foward (<code>--no-ff</code>)</h4><p>如果当前的分支与你要合并的分支相比没有任何额外的提交，那就太好了，但是不幸的是，这种情况很少！如果需要合并的分支和你当前分支都做了改动，则git将执行no-fast-forward合并。使用无快进合并，Git在活动分支上创建一个新的合并提交，提交的父提交既指向当前分支又指向我们要合并的分支！<br><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20merge%20no%20--ff.gif" alt="git 效果动画 merge no --ff.gif"><br>建议：每次合并的时候最好加上参数 –no-ff。因为主干分支往往都是比较稳定的代码，feature开发分支的许多提交都是零碎的，快进式合并代码会把feature开发分支的提交历史混入到主干分支上。</p>
 <h3 id="Rebasing"><a href="#Rebasing" class="headerlink" title="Rebasing"></a>Rebasing</h3><p>​</p>
-<p>我们刚刚何通过执行git merge将更改从一个分支合入到另一个分支啥过。但是将更改从一个分支添加到另一个分支还有另一种方法是——执行git rebase。<br>git rebase从当前分支复制提交，并将这些复制的提交放在指定分支的顶部。<br><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440740442-53cb6fea-2753-4582-a851-5d50996c3e6e.gif#height=270&id=znCSg&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20git%20rebase%20branch.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=227073&status=done&style=none&width=480" alt="git 效果动画 git rebase branch.gif"><br>因为Git中的每一个commit都是不会改变的，所以rebase之后的每个commit其实都是新产生的，而不是对原先的commit进行修改，从上面的动画也能看出master原本的hash值发生了改变。这也就是rebase与merge合并相比最大的区别,使用rebase这样你就不会遇到任何合并冲突，并且可以保持良好的线性Git历史记录。<br>但个人的建议不要在较大且多人开发的项目中使用，因为git rebase会更改项目的历史记录,这会让回溯历史提交不好定位。</p>
+<p>我们刚刚何通过执行git merge将更改从一个分支合入到另一个分支啥过。但是将更改从一个分支添加到另一个分支还有另一种方法是——执行git rebase。<br>git rebase从当前分支复制提交，并将这些复制的提交放在指定分支的顶部。<br><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20git%20rebase%20branch.gif" alt="git 效果动画 git rebase branch.gif"><br>因为Git中的每一个commit都是不会改变的，所以rebase之后的每个commit其实都是新产生的，而不是对原先的commit进行修改，从上面的动画也能看出master原本的hash值发生了改变。这也就是rebase与merge合并相比最大的区别,使用rebase这样你就不会遇到任何合并冲突，并且可以保持良好的线性Git历史记录。<br>但个人的建议不要在较大且多人开发的项目中使用，因为git rebase会更改项目的历史记录,这会让回溯历史提交不好定位。</p>
 <h3 id="Resetting"><a href="#Resetting" class="headerlink" title="Resetting"></a>Resetting</h3><p>reset把当前branch指向指定的commit，当你使用Git的时候可能commit提交代码后，发现这一次的commit的内容是错误的，这时候你可能需要用到git reset 命令。想要更好的理解reset命令，需要先看看git的三大区工作区、暂存区、版本库</p>
 <ol>
 <li>工作区 working directory此时文件处于 untracked（未追踪） 状态，此时使用git add命令可将文件加入到暂存区</li>
@@ -131,11 +131,11 @@
 <h4 id="soft-reset"><a href="#soft-reset" class="headerlink" title="soft reset"></a>soft reset</h4><blockquote>
 <p>git reset –soft</p>
 </blockquote>
-<p>移动HEAD到指定的 commi 节点，但保留 工作区和暂存区的内容，简单来说就是你的代码还在只是变成了未提交状态或未添加状态,如果想重新提交，需要commit即可<br><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440682637-0d5e569b-ddaf-4198-84af-f8525e2e885f.gif#height=270&id=ZRIS0&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20soft%20reset.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=135149&status=done&style=none&width=480" alt="git 效果动画 soft reset.gif"></p>
+<p>移动HEAD到指定的 commi 节点，但保留 工作区和暂存区的内容，简单来说就是你的代码还在只是变成了未提交状态或未添加状态,如果想重新提交，需要commit即可<br><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20soft%20reset.gif" alt="git 效果动画 soft reset.gif"></p>
 <h4 id="hard-reset"><a href="#hard-reset" class="headerlink" title="hard reset"></a>hard reset</h4><blockquote>
 <p>git reset –hard</p>
 </blockquote>
-<p>彻底丢掉当前版本的修改，并更改HAEAD移动到指定的commit节点；就是回退到指定的版本,不保留本地任何修改，慎用！<br><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440694672-8ecfd83a-4b04-4755-8a13-e3c27136d93d.gif#height=270&id=b0sZH&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20Hard%20reset.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=129546&status=done&style=none&width=480" alt="git 效果动画 Hard reset.gif"></p>
+<p>彻底丢掉当前版本的修改，并更改HAEAD移动到指定的commit节点；就是回退到指定的版本,不保留本地任何修改，慎用！<br><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20Hard%20reset.gif" alt="git 效果动画 Hard reset.gif"></p>
 <h4 id="mixed-reset"><a href="#mixed-reset" class="headerlink" title="mixed reset"></a>mixed reset</h4><blockquote>
 <p>git reset –mixed</p>
 </blockquote>
@@ -144,7 +144,7 @@
 <blockquote>
 <p>git cherry-pick c1h924</p>
 </blockquote>
-<p><img src="https://cdn.nlark.com/yuque/0/2021/gif/1242336/1621440704404-ffe7026a-72d3-4e34-9726-a3e217c07704.gif#height=270&id=Xe8Fd&margin=%5Bobject%20Object%5D&name=git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20cherry%20pick.gif&originHeight=270&originWidth=480&originalType=binary&ratio=1&size=471377&status=done&style=none&width=480" alt="git 效果动画 cherry pick.gif"><br>从上图中可以看到master分支上就引入了c1h924 commit的改动，只不过在master分支是一个新的commit提交。<br>Cherry pick 还支持一次转移多个提交。</p>
+<p><img src="/../images/git/git%20%E6%95%88%E6%9E%9C%E5%8A%A8%E7%94%BB%20cherry%20pick.gif" alt="git 效果动画 cherry pick.gif"><br>从上图中可以看到master分支上就引入了c1h924 commit的改动，只不过在master分支是一个新的commit提交。<br>Cherry pick 还支持一次转移多个提交。</p>
 <blockquote>
 <p> git cherry-pick <HashA> <HashB></p>
 </blockquote>
@@ -159,7 +159,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="ckyvsawu70017o4vhciywbskq" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="ckyvsukb200176fvh3qy4ag1a" class="article-share-link">
         分享
       </a>
       

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    HTTPS |
+    
+    modi.wu
+  </title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-HTTPS" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h1 class="article-title" itemprop="name">
+  HTTPS
+</h1>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/02/03/HTTPS/" class="article-date">
+  <time datetime="2022-02-03T12:55:22.000Z" itemprop="datePublished">2022-02-03</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/http/">http</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+      <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>HTTP over SSL的简称，即工作在SSL(或TLS)上的HTTP。就是在HTTP之下增加的一个安全层，用于保障HTTP的加密传输</p>
+<span id="more"></span>
+<p>SSL：Secure Sockets Layer<br>TLS：Transport Layers Security </p>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><p>在客户端和服务器之间协商出一套对称密钥，每次发送消息之前将内容加密，收到之后解密，达到内的加密传输。</p>
+<p>HTTP发送消息之前，先报文交给TLS进行加密再发送给TCP<br>HTTP接受消息之前，TCP接收的报文先交给TLS进行解密再交给HTTP</p>
+<h2 id="为什么不使用非对称加密"><a href="#为什么不使用非对称加密" class="headerlink" title="为什么不使用非对称加密"></a>为什么不使用非对称加密</h2><p>非对称加密由于使用了复杂的数学原理，计算相当复杂，如果使用非对称加密来加密通信内容，会严重影响网络通信的性能</p>
+<h2 id="HTTPS连接建立过程"><a href="#HTTPS连接建立过程" class="headerlink" title="HTTPS连接建立过程"></a>HTTPS连接建立过程</h2><p>大致内容可以分为如下：</p>
+<ul>
+<li>客户端请求建立TLS连接</li>
+<li>服务器返回证书</li>
+<li>客户端验证服务器证书</li>
+<li>客户端信任服务器后，和服务器协商对称密钥</li>
+<li>使用对称密钥开始通信</li>
+</ul>
+<ol>
+<li>ClientHello</li>
+<li>ServerHello</li>
+<li>服务器证书信任建立</li>
+<li>Pre-masterSecret</li>
+<li>客户端通知:将使用加密通信 </li>
+<li>客户端发送:Finished</li>
+<li>服务器通知:将使用加密通信 </li>
+<li>服务器发送:Finished</li>
+</ol>
+<h3 id="客户端：client-hello"><a href="#客户端：client-hello" class="headerlink" title="客户端：client hello"></a>客户端：client hello</h3><ul>
+<li>可选的TLS版本</li>
+<li>可选的加密套件<ul>
+<li>可选的对称加密算法</li>
+<li>可选的非对称加密算法</li>
+<li>可选的hash算法</li>
+</ul>
+</li>
+<li>客户端随机数</li>
+</ul>
+<h3 id="服务器：server-hello"><a href="#服务器：server-hello" class="headerlink" title="服务器：server hello"></a>服务器：server hello</h3><ul>
+<li>选出加密套件<ul>
+<li>对称加密算法</li>
+<li>非对称加密算法</li>
+<li>hash算法</li>
+</ul>
+</li>
+<li>服务端随机数</li>
+</ul>
+<blockquote>
+<p>PS：此时客户端和服务端都有两个相同的随机数</p>
+</blockquote>
+<h3 id="服务器：发送服务器证书"><a href="#服务器：发送服务器证书" class="headerlink" title="服务器：发送服务器证书"></a>服务器：发送服务器证书</h3><ul>
+<li>服务器主机名</li>
+<li>服务器公钥（元数据）</li>
+<li>服务器公钥的签名（用私钥对元数据公钥的hash值进行非对称加密）</li>
+<li>用于验证这个公钥签名的另一个公钥</li>
+</ul>
+<blockquote>
+<p>PS：验证公钥的可行性，递归到根证书，信任签发机构</p>
+</blockquote>
+<h3 id="客户端：Pre-master-secret"><a href="#客户端：Pre-master-secret" class="headerlink" title="客户端：Pre-master secret"></a>客户端：Pre-master secret</h3><p>使用服务器发送过来的公钥对一个随机数进行加密，发送给服务器。服务端会使用它的私钥对Pre-master secret解密的到这个随机数。</p>
+<p>客户端和服务端hello中的随机数、Pre-master secret随机数共同生成一个master secret。最终会得到客户端加密密钥、服务端加密密钥、客户端MAC secret、服务端MAC secret。客户端和服务端双方都会持有这些密钥。</p>
+<ul>
+<li>客户端给服务端发送消息，会用客户端加密密钥，服务端会用客户端加密密钥解密 </li>
+<li>服务端给客户端发送消息，会用服务端加密密钥，客户端会用服务端加密密钥解密</li>
+</ul>
+<blockquote>
+<p>为什么客户端和服务端发送消息用不同的密钥：<br>但是有种可能，A给B发送消息，消息被劫持，虽然无法解密消息，但直接返回给A，就会导致消息错乱。比如你女朋友和你说：我们分手吧。劫持消息直接返回给你的女朋友，那你们就over，如果客户端和服务端发送消息用不同的密钥，就可避免这种情况。</p>
+</blockquote>
+<blockquote>
+<p>PS：为什么要使用三个随机数:</p>
+<p>不管是客户端还是服务器，都需要随机数，这样生成的密钥才不会每次都一样。由于SSL协议中证书是静态的，因此十分有必要引入一种随机因素来保证协商出来的密钥的随机性。对于RSA密钥交换算法来说，pre-master secret本身就是一个随机数，再加上hello消息中的随机，三个随机数通过一个密钥导出器最终导出一个对称密钥。pre-master secret的存在在于SSL协议不信任每个主机都能产生完全随机的随机数，如果随机数不随机，那么pre-master secret就有可能被猜出来，那么仅适用pre-master secret作为密钥就不合适了，因此必须引入新的随机因素，那么客户端和服务器加上pre-master secret三个随机数一同生成的密钥就不容易被猜出了，一个伪随机可能完全不随机，可是是三个伪随机就十分接近随机了，每增加一个自由度，随机性增加的可不是一。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/02/03/HTTPS/" data-id="ckz76skzh0003mmvhe7yy3hrj" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http/" rel="tag">http</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">用动画带你学习Git原理</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2022</li>
+      
+        <li>WU</li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/copybtn.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

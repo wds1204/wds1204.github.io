@@ -101,11 +101,18 @@
         
       
       
-      <blockquote>
+        <blockquote>
 <p>okhttp源码版本: 4.9.0</p>
 </blockquote>
-<p>在上篇</p>
-
+<p>承接上篇<a href="https://wds1204.github.io/2022/02/04/okhttp%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/">okhttp框架解析</a></p>
+<p>第一个内置拦截器，<code>RetryAndFollowUpInterceptor</code>如它的名字所诉重试&amp;重定向。它会对特定的网络错误类型和需要重定向的请求进行请求网络重试，那么要想做到重试估计要开启一个循环不停的处理，那它具体是如何工作的呢?
+        
+          <p>
+            <a class="article-more-link" href="/2022/02/10/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BRetryAndFollowUpInterceptor/">
+              阅读全文...
+            </a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
@@ -163,7 +170,7 @@
         
       
       
-        <p>作为Android程序员除了Google官方提供Android源码，开发项目时还要用很多优秀的三方开源库帮助我们快速开发，OKhttp3作为square开源的网络库，已成Android程序员必用的网络库，因为其优秀的代码设计、完善的网络请求功能，也被Google收入官方源码作为网络实现。作为网络的网络有很多分析OkHttp的文章，大多都是讲OkHttp的使用、框架结构以及设计模式等这些内容。而这些只是OkHttp的一些手段和方式，它本质上一个网络请求的库，我们阅读源码的时，实现只不过是为了达到目的一种方式，脱离目的的实现，如缘木求鱼。所以在分析OkHttp源码的时一定要结合http本身的特性，不然就很容易偏离事物本质。</p>
+        <p>作为Android程序员除了Google官方提供Android源码，开发项目时还要用很多优秀的三方开源库帮助我们快速开发，OKhttp3作为square开源的网络库，已成Android程序员必用的网络库，因为其优秀的代码设计、完善的网络请求功能，也被Google收入官方源码实现。作为开发者学习作为网络的网络有很多分析OkHttp的文章，大多都是讲OkHttp的使用、框架结构以及设计模式等这些内容。而这些只是OkHttp的一些手段和方式，它本质上一个网络请求的库，我们阅读源码的时，实现只不过是为了达到目的一种方式，脱离目的的实现，如缘木求鱼。所以在分析OkHttp源码的时一定要结合http本身的特性，不然就很容易偏离事物本质。</p>
         
           <p>
             <a class="article-more-link" href="/2022/02/04/okhttp%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/">

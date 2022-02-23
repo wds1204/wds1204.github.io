@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    okhttp拦截器之CacheInterceptor |
+    
+    modi.wu
+  </title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-okhttp拦截器之CacheInterceptor" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h1 class="article-title" itemprop="name">
+  okhttp拦截器之CacheInterceptor
+</h1>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/" class="article-date">
+  <time datetime="2022-02-23T14:49:02.000Z" itemprop="datePublished">2022-02-23</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/android/">android</a> / <a class="article-category-link" href="/categories/okhttp/">okhttp</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+      <p><code>CacheInterceptor</code>拦截器官方给个注释：Serves requests from the cache and writes responses to the cache.<br>用于从缓存中获取相应和把相应写入缓存中，<code>okhttp</code>缓存默认是不开启，需要通过如下方式设置<code>Cache</code>.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> client = OkHttpClient.Builder()</span><br><span class="line">        .cache(</span><br><span class="line">            Cache(</span><br><span class="line">                directory = File(application.cacheDir, <span class="string">&quot;http_cache&quot;</span>),</span><br><span class="line">                maxSize = <span class="number">50L</span> * <span class="number">1024L</span> * <span class="number">1024L</span></span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">        .build()</span><br></pre></td></tr></table></figure>
+<p>配置完<code>HttpClient</code>网络缓存就开启了，这样就了缓存的效果，但也可以说无效，至于为什么这么说，我们先看源码。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>okhttp源码版本: 4.9.0</p>
+</blockquote>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p>进入<code>CacheInterceptor</code>拦截器<code>intercept</code>方法的源码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">//c</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">intercept</span><span class="params">(chain: <span class="type">Interceptor</span>.<span class="type">Chain</span>)</span></span>: Response &#123;</span><br><span class="line">  <span class="keyword">val</span> call = chain.call()</span><br><span class="line">  <span class="comment">//1、如果HttpClient设置cache，则会通过此cache的get方法：传入当前request，获取一个候选缓存——&gt;response</span></span><br><span class="line">  <span class="keyword">val</span> cacheCandidate = cache?.<span class="keyword">get</span>(chain.request())</span><br><span class="line">  <span class="comment">//2、获取当前系统时间</span></span><br><span class="line">  <span class="keyword">val</span> now = System.currentTimeMillis()</span><br><span class="line">  <span class="comment">//3、根据CacheStrategy的工厂Factory，构造一个一个CacheStrategy对象，可以看出是通过传入时间、request、cacheCandidate计算一个缓存策略工厂.</span></span><br><span class="line">  <span class="keyword">val</span> strategy = CacheStrategy.Factory(now, chain.request(), cacheCandidate).compute()</span><br><span class="line">  <span class="comment">//4、取出networkRequest（当前的网络请求）、cacheResponse（缓存）</span></span><br><span class="line">  <span class="keyword">val</span> networkRequest = strategy.networkRequest</span><br><span class="line">  <span class="keyword">val</span> cacheResponse = strategy.cacheResponse</span><br><span class="line">  <span class="comment">//5、对相应进行跟踪计数</span></span><br><span class="line">  cache?.trackResponse(strategy)</span><br><span class="line">  <span class="keyword">val</span> listener = (call <span class="keyword">as</span>? RealCall)?.eventListener ?: EventListener.NONE</span><br><span class="line">  <span class="comment">//6、如果之前还候选缓存不为空，但通过计算处理后cacheResponse为空，那么就关闭候选缓存的资源</span></span><br><span class="line">  <span class="keyword">if</span> (cacheCandidate != <span class="literal">null</span> &amp;&amp; cacheResponse == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="comment">// The cache candidate wasn&#x27;t applicable. Close it.</span></span><br><span class="line">    cacheCandidate.body?.closeQuietly()</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//7、如果要发送的请求为空&amp;也没有缓存，那么直接返回504给客户端，并且body为空</span></span><br><span class="line">  <span class="comment">// If we&#x27;re forbidden from using the network and the cache is insufficient, fail.</span></span><br><span class="line">  <span class="keyword">if</span> (networkRequest == <span class="literal">null</span> &amp;&amp; cacheResponse == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> Response.Builder()</span><br><span class="line">        .request(chain.request())</span><br><span class="line">        .protocol(Protocol.HTTP_1_1)</span><br><span class="line">        .code(HTTP_GATEWAY_TIMEOUT)</span><br><span class="line">        .message(<span class="string">&quot;Unsatisfiable Request (only-if-cached)&quot;</span>)</span><br><span class="line">        .body(EMPTY_RESPONSE)</span><br><span class="line">        .sentRequestAtMillis(-<span class="number">1L</span>)</span><br><span class="line">        .receivedResponseAtMillis(System.currentTimeMillis())</span><br><span class="line">        .build().also &#123;</span><br><span class="line">          listener.satisfactionFailure(call, it)</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//8、如果不需要发送网络请求，那么直接缓存返回给客户端</span></span><br><span class="line">  <span class="comment">// If we don&#x27;t need the network, we&#x27;re done.</span></span><br><span class="line">  <span class="keyword">if</span> (networkRequest == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> cacheResponse!!.newBuilder()</span><br><span class="line">        .cacheResponse(stripBody(cacheResponse))</span><br><span class="line">        .build().also &#123;</span><br><span class="line">          listener.cacheHit(call, it)</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//7、缓存命中的监听</span></span><br><span class="line">  <span class="keyword">if</span> (cacheResponse != <span class="literal">null</span>) &#123;</span><br><span class="line">    listener.cacheConditionalHit(call, cacheResponse)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cache != <span class="literal">null</span>) &#123;</span><br><span class="line">    listener.cacheMiss(call)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//8、此时没有可用缓存，继续调用链的下一步，在这里就是发起真正的网络请求</span></span><br><span class="line">  <span class="keyword">var</span> networkResponse: Response? = <span class="literal">null</span></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    networkResponse = chain.proceed(networkRequest)</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="comment">// If we&#x27;re crashing on I/O or otherwise, don&#x27;t leak the cache body.</span></span><br><span class="line">    <span class="keyword">if</span> (networkResponse == <span class="literal">null</span> &amp;&amp; cacheCandidate != <span class="literal">null</span>) &#123;</span><br><span class="line">      cacheCandidate.body?.closeQuietly()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//10、在网络请求完成后，如果已经有了一个缓存，需要做一些其他条件的判断</span></span><br><span class="line">  <span class="comment">// If we have a cache response too, then we&#x27;re doing a conditional get.</span></span><br><span class="line">  <span class="keyword">if</span> (cacheResponse != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="comment">//11、如果响应码是304，那就把之前的缓存返回给客户端</span></span><br><span class="line">    <span class="keyword">if</span> (networkResponse?.code == HTTP_NOT_MODIFIED) &#123;</span><br><span class="line">      <span class="keyword">val</span> response = cacheResponse.newBuilder()</span><br><span class="line">          .headers(combine(cacheResponse.headers, networkResponse.headers))</span><br><span class="line">          .sentRequestAtMillis(networkResponse.sentRequestAtMillis)</span><br><span class="line">          .receivedResponseAtMillis(networkResponse.receivedResponseAtMillis)</span><br><span class="line">          .cacheResponse(stripBody(cacheResponse))</span><br><span class="line">          .networkResponse(stripBody(networkResponse))</span><br><span class="line">          .build()</span><br><span class="line"></span><br><span class="line">      networkResponse.body!!.close()</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Update the cache after combining headers but before stripping the</span></span><br><span class="line">      <span class="comment">// Content-Encoding header (as performed by initContentStream()).</span></span><br><span class="line">      cache!!.trackConditionalCacheHit()</span><br><span class="line">      cache.update(cacheResponse, response)</span><br><span class="line">      <span class="keyword">return</span> response.also &#123;</span><br><span class="line">        listener.cacheHit(call, it)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      cacheResponse.body?.closeQuietly()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//12、生成最终的response</span></span><br><span class="line">  <span class="keyword">val</span> response = networkResponse!!.newBuilder()</span><br><span class="line">      .cacheResponse(stripBody(cacheResponse))</span><br><span class="line">      .networkResponse(stripBody(networkResponse))</span><br><span class="line">      .build()</span><br><span class="line">  <span class="comment">//13、如果cache不为空，response合法并且可缓存，则调用cache的put方法存储响应</span></span><br><span class="line">  <span class="keyword">if</span> (cache != <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (response.promisesBody() &amp;&amp; CacheStrategy.isCacheable(response, networkRequest)) &#123;</span><br><span class="line">      <span class="comment">// Offer this request to the cache.</span></span><br><span class="line">      <span class="keyword">val</span> cacheRequest = cache.put(response)</span><br><span class="line">      <span class="keyword">return</span> cacheWritingResponse(cacheRequest, response).also &#123;</span><br><span class="line">        <span class="keyword">if</span> (cacheResponse != <span class="literal">null</span>) &#123;</span><br><span class="line">          <span class="comment">// This will log a conditional cache miss only.</span></span><br><span class="line">          listener.cacheMiss(call)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//14、对于一些的请求方法: PATCH、PUT、DELETE、MOVE不支持，把缓存移除</span></span><br><span class="line">    <span class="keyword">if</span> (HttpMethod.invalidatesCache(networkRequest.method)) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        cache.remove(networkRequest)</span><br><span class="line">      &#125; <span class="keyword">catch</span> (_: IOException) &#123;</span><br><span class="line">        <span class="comment">// The cache cannot be written.</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> response</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/" data-id="ckzzqygl9000tj8vh2kfu77s9" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http/" rel="tag">http</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/okhttp/" rel="tag">okhttp</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2022/02/12/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BBridgeInterceptor/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">okhttp拦截器之BridgeInterceptor</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2022</li>
+      
+        <li>WU</li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/copybtn.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

@@ -101,9 +101,11 @@
         
       
       
-        <p><code>CacheInterceptor</code>拦截器官方给个注释：Serves requests from the cache and writes responses to the cache.<br>用于从缓存中获取相应和把相应写入缓存中，<code>okhttp</code>缓存默认是不开启，需要通过如下方式设置<code>Cache</code>.</p>
+        <p><code>CacheInterceptor</code>拦截器官方给个注释：Serves requests from the cache and writes responses to the cache.用于从缓存中获取相应和把相应写入缓存中，<code>okhttp</code>缓存默认是不开启,需要通过如下方式设置<code>Cache</code>.</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> client = OkHttpClient.Builder()</span><br><span class="line">        .cache(</span><br><span class="line">            Cache(</span><br><span class="line">                directory = File(application.cacheDir, <span class="string">&quot;http_cache&quot;</span>),</span><br><span class="line">                maxSize = <span class="number">50L</span> * <span class="number">1024L</span> * <span class="number">1024L</span></span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">        .build()</span><br></pre></td></tr></table></figure>
-<p>配置完<code>HttpClient</code>网络缓存就开启了，这样就了缓存的效果，但也可以说无效，至于为什么这么说，我们先看源码。</p>
+<p>配置完<code>HttpClient</code>网络缓存后，这样就有了缓存的效果,但也可以说没有效果。因为如果你想在网络断开的情况下再次请求网络后加载缓存的内容,如果只有这么设置可能不够，可能需要再request中加入CacheControl.FORCE_CACHE这个策略。代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> request: Request = Request.Builder()</span><br><span class="line">          .url(url)</span><br><span class="line">          .cacheControl(CacheControl.FORCE_CACHE)</span><br><span class="line">          .build()</span><br></pre></td></tr></table></figure>
+<p>至于为什么，先看拦截器源码：</p>
         
           <p>
             <a class="article-more-link" href="/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/">
@@ -114,7 +116,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/" data-id="ckzzqygl9000tj8vh2kfu77s9" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/" data-id="cl05fqga3000qjgvh2hm009ju" class="article-share-link">
         分享
       </a>
       
@@ -179,7 +181,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/02/12/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BBridgeInterceptor/" data-id="ckzzqygl7000qj8vhd12ra2g6" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/02/12/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BBridgeInterceptor/" data-id="cl05fqga5000ujgvhc8dm8gee" class="article-share-link">
         分享
       </a>
       
@@ -248,7 +250,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/02/10/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BRetryAndFollowUpInterceptor%20copy/" data-id="ckzzqygld0011j8vhb7c3emaq" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/02/10/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BRetryAndFollowUpInterceptor%20copy/" data-id="cl05fqga90010jgvh915i4260" class="article-share-link">
         分享
       </a>
       
@@ -313,7 +315,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/02/04/okhttp%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/" data-id="ckzzqygla000wj8vhcxdb7qxp" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/02/04/okhttp%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/" data-id="cl05fqga7000wjgvh8stz5qx8" class="article-share-link">
         分享
       </a>
       
@@ -369,7 +371,7 @@
   <div class="article-gallery-photos">
     
     
-    <a class="article-gallery-img" href="/2022/02/03/HTTPS/" rel="gallery_ckzzqygks0006j8vh51z1f6qd">
+    <a class="article-gallery-img" href="/2022/02/03/HTTPS/" rel="gallery_cl05fqga1000ojgvh1wm665l8">
       <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/TLS.png?raw=true" itemprop="image">
     </a>
     
@@ -390,7 +392,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/02/03/HTTPS/" data-id="ckzzqygks0006j8vh51z1f6qd" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/02/03/HTTPS/" data-id="cl05fqga1000ojgvh1wm665l8" class="article-share-link">
         分享
       </a>
       
@@ -446,7 +448,7 @@
   <div class="article-gallery-photos">
     
     
-    <a class="article-gallery-img" href="/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="gallery_ckzzqyglb000yj8vh6n73hz2t">
+    <a class="article-gallery-img" href="/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="gallery_cl05fqgab0012jgvheru8870j">
       <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/git.png?raw=true" itemprop="image">
     </a>
     
@@ -467,7 +469,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="ckzzqyglb000yj8vh6n73hz2t" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="cl05fqgab0012jgvheru8870j" class="article-share-link">
         分享
       </a>
       
@@ -532,7 +534,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/18/Java%20Binder%E8%A7%A3%E6%9E%90/" data-id="ckzzqygku0008j8vh63i424rb" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/18/Java%20Binder%E8%A7%A3%E6%9E%90/" data-id="cl05fqg990006jgvhgg81b0s0" class="article-share-link">
         分享
       </a>
       
@@ -597,7 +599,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" data-id="ckzzqygkx000dj8vh93ipa1ha" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" data-id="cl05fqg9z000ljgvh3sr488zu" class="article-share-link">
         分享
       </a>
       
@@ -662,7 +664,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/11/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" data-id="ckzzqygkz000fj8vh5sop6m7u" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/11/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" data-id="cl05fqg9g000ejgvh541w061d" class="article-share-link">
         分享
       </a>
       
@@ -727,7 +729,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" data-id="ckzzqygkw000aj8vh0ep32uzu" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" data-id="cl05fqg9e000ajgvhhoo06iw6" class="article-share-link">
         分享
       </a>
       

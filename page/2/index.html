@@ -63,6 +63,71 @@
     <h1 class="page-type-title"></h1>
     
     
+    <article id="post-Native Binder机制之ServiceManager" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/">Native Binder机制之ServiceManager</a>
+</h2>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" class="article-date">
+  <time datetime="2022-01-06T16:42:04.000Z" itemprop="datePublished">2022-01-07</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/android/">android</a> / <a class="article-category-link" href="/categories/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">源码解析</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的获取过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说到过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。所以首先要了解<code>ServiceManager</code>的启动过程，这样更有助于理解系统服务的注册过程和获取过程。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" data-id="cl06qytuw000kx6vhgpps13sp" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/" rel="tag">Binder</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
     <article id="post-Native Binder机制之系统服务注册" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -112,7 +177,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="cl06qk2cv000hjkvh9elo47m6" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" data-id="cl06qytv5000xx6vh7kmdcfp5" class="article-share-link">
         分享
       </a>
       
@@ -168,7 +233,7 @@
   <div class="article-gallery-photos">
     
     
-    <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_cl06qk2cx000kjkvhdq0787xa">
+    <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_cl06qytux000mx6vh17q13vkc">
       <img src="https://s2.loli.net/2021/12/22/IXpLoPCi57AHr3h.png" itemprop="image">
     </a>
     
@@ -189,7 +254,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="cl06qk2cx000kjkvhdq0787xa" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="cl06qytux000mx6vh17q13vkc" class="article-share-link">
         分享
       </a>
       
@@ -250,7 +315,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/22/hello-world/" data-id="cl06qk2cz000njkvh0sev2nwg" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/22/hello-world/" data-id="cl06qytv0000nx6vh5aof94jh" class="article-share-link">
         分享
       </a>
       

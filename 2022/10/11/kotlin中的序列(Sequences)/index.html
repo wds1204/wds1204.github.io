@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    Kotlin中的序列(Sequences) |
+    
+    modi.wu
+  </title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-kotlin中的序列(Sequences)" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h1 class="article-title" itemprop="name">
+  Kotlin中的序列(Sequences)
+</h1>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" class="article-date">
+  <time datetime="2022-10-11T12:34:02.000Z" itemprop="datePublished">2022-10-11</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/kotlin/">kotlin</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+      <p>除集合之外，kotlin的标准库中还提供了另一种容器——序列(<code>Sequence&lt;T&gt;</code>)。序列同样提供了<code>Iterable</code>相<br>同的函数，但实现的是另一种方法进行多步骤的集合处理。如果你熟悉Java，其实就是Java8版本中<code>Stream</code>的翻版。</p>
+<span id="more"></span>
+
+<h3 id="Sequences和Iterable的区别"><a href="#Sequences和Iterable的区别" class="headerlink" title="Sequences和Iterable的区别"></a>Sequences和Iterable的区别</h3><p>当Iterable的处理包含了多个步骤时，它们会优先执行每个处理步骤完成并返回其结果——中间集合，后续<br>的操作在此集合的基础上执行。而序列的多步骤处理会延迟执行，仅当请求整个处理链的结果时才会进行<br>实际的计算。而且操作顺序也不同：Sequence对每个元素逐个执行所有步骤，反过来，Iterable 完成整个<br>集合的每个步骤，然后进行下一步。</p>
+<p>一个具体的例子来解释<code>Sequences</code>和<code>Iterable</code>的区别是什么：先对<code>filter</code>操作中，取出长度大于字符，再<br><code>map</code>转化成字符的长度，最后用<code>take</code>取出前两位。</p>
+<p>1.集合<code>Iterable</code>的方式</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> numbers = listOf(<span class="string">&quot;five&quot;</span>, <span class="string">&quot;four&quot;</span>, <span class="string">&quot;three&quot;</span>, <span class="string">&quot;two&quot;</span>, <span class="string">&quot;one&quot;</span>)</span><br><span class="line">numbers.filter &#123;</span><br><span class="line">    println(<span class="string">&quot;filter:<span class="variable">$it</span>&quot;</span>)</span><br><span class="line">    it.length &gt; <span class="number">3</span></span><br><span class="line">&#125;.map &#123;</span><br><span class="line">    println(<span class="string">&quot;map-&gt;<span class="variable">$it</span>&quot;</span>);</span><br><span class="line">    it.length</span><br><span class="line">&#125;.take(<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>输出如下：<br><img src="/../images/sequences/img_1.png" alt="image.png"><br>从输出日志可以看出，先把filter的操作执行完，再执行map，最后取出集合中前两位。每个步骤中间都会生成一个集合，后续的操作都依据此集合。</p>
+<p>2.<code>Sequences</code>的多步骤处理：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> numbers = listOf(<span class="string">&quot;five&quot;</span>,<span class="string">&quot;four&quot;</span>, <span class="string">&quot;three&quot;</span>, <span class="string">&quot;two&quot;</span>, <span class="string">&quot;one&quot;</span>)</span><br><span class="line"><span class="keyword">val</span> numberSequences = numbers.asSequence().filter &#123;</span><br><span class="line">    println(<span class="string">&quot;filter:<span class="variable">$it</span>&quot;</span>)</span><br><span class="line">    it.length &gt; <span class="number">3</span></span><br><span class="line">&#125;.map &#123;</span><br><span class="line">    println(<span class="string">&quot;map-&gt;<span class="variable">$it</span>&quot;</span>);</span><br><span class="line">    it.length</span><br><span class="line">&#125;.take(<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>如果只是这么一段代码，因为<code>Sequences</code>延迟执行得特新，不会有任何输出。因为对<code>Sequences</code>执行<br>map、filer、take等操作时返回得结果还个<code>Sequences</code>。需要调用<code>Sequences</code>的<code>iterator()</code>方法才会执行。<br>我这里在最后面加上如下代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(numberSequences.toList())</span><br></pre></td></tr></table></figure>
+<p>输出如下：<br><img src="/../images/sequences/img_2.png"></p>
+<p>从日志明显能看出<code>Sequences</code>在多步骤处理时是对每个元素逐个操作。</p>
+<p>序列操作 ：基本原理是惰性求值，也就是说在进行中间操作的时候，是不会产生中间数据结果的，只有等到进行末端操作的时候才会进行求值。也就是上述例子中的每个数据元素都是先执行 filter 操作，接着马上执行 map 操作,最后执行take操作。然后下一个元素也是先执行 filter 操作，接着马上执行 map 操作，再take操作。然而普通集合是所有元素都完执行 filter 后的数据存起来，然后从存储数据集中又所有的元素执行 map 操作存起来的原理。<br>集合普通操作 ：针对每一次操作都会产生新的中间结果，也就是上述例子中的 filter 操作完后会把原始数据集循环遍历一次得到最新的数据集存放在新的集合中，然后进行 map 操作，遍历上一次 filter 新集合中数据元素，最后得到最新的数据集又存在一个新的集合中。</p>
+<h3 id="Sequences-原理源码完全解析"><a href="#Sequences-原理源码完全解析" class="headerlink" title="Sequences 原理源码完全解析"></a>Sequences 原理源码完全解析</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> numbers = listOf(<span class="string">&quot;five&quot;</span>, <span class="string">&quot;four&quot;</span>, <span class="string">&quot;three&quot;</span>, <span class="string">&quot;two&quot;</span>, <span class="string">&quot;one&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> numberSequences = numbers.asSequence().filter &#123;</span><br><span class="line">        it.length &gt; <span class="number">3</span></span><br><span class="line">    &#125;.map &#123;</span><br><span class="line">        println(<span class="string">&quot;map-&gt;<span class="variable">$it</span>&quot;</span>);</span><br><span class="line">        it.length</span><br><span class="line">    &#125;.take(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过decompile上述例子的源码会发现，使用序列不管进行多少中间操作都是共享同一个迭代器中的数据，想知道共享同一个迭代器的原理吗？那看内部源码是如何实现的吧。</p>
+<h4 id="使用Sequences反编译源码"><a href="#使用Sequences反编译源码" class="headerlink" title="使用Sequences反编译源码"></a>使用<code>Sequences</code>反编译源码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="meta">@NotNull</span> String[] args)</span> </span>&#123;</span><br><span class="line">   Intrinsics.checkNotNullParameter(args, <span class="string">&quot;args&quot;</span>);</span><br><span class="line">   List numbers = CollectionsKt.listOf(<span class="keyword">new</span> String[]&#123;<span class="string">&quot;five&quot;</span>, <span class="string">&quot;four&quot;</span>, <span class="string">&quot;three&quot;</span>, <span class="string">&quot;two&quot;</span>, <span class="string">&quot;one&quot;</span>&#125;);</span><br><span class="line">   Sequence var2 = SequencesKt.take(SequencesKt.map(SequencesKt.filter(CollectionsKt.asSequence((Iterable)numbers), (Function1)<span class="keyword">null</span>.INSTANCE), (Function1)<span class="keyword">null</span>.INSTANCE), <span class="number">2</span>);</span><br><span class="line">   <span class="keyword">boolean</span> var3 = <span class="keyword">false</span>;</span><br><span class="line">   <span class="keyword">boolean</span> var4 = <span class="keyword">false</span>;</span><br><span class="line">   <span class="keyword">int</span> var6 = <span class="keyword">false</span>;</span><br><span class="line">   List var7 = SequencesKt.toList(var2);</span><br><span class="line">   <span class="keyword">boolean</span> var8 = <span class="keyword">false</span>;</span><br><span class="line">   System.out.println(var7);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>抽取里面关键的部分：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sequence var2 = SequencesKt.take(SequencesKt.map(SequencesKt.filter(CollectionsKt.asSequence((Iterable)numbers), (Function1)<span class="keyword">null</span>.INSTANCE), (Function1)<span class="keyword">null</span>.INSTANCE), <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>这段代码很长，给它分以下段。</p>
+<blockquote>
+<p>val asSequence=CollectionsKt.asSequence((Iterable)numbers)//part 1<br>val filterSequence=SequencesKt.filter(asSequence, (Function1)null.INSTANCE)//part 2<br>val mapSequence=SequencesKt.map(filterSequence, (Function1)null.INSTANCE)//part 3<br>val takeSequence=SequencesKt.take(mapSequence,2)//part 4</p>
+</blockquote>
+<p><strong>第一部分:</strong><br>调用<code>Iterable</code>的中的<code>asSequence</code>扩展方法将集合转换成<code>Sequence</code>对象:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> Iterable<span class="type">&lt;T&gt;</span>.<span class="title">asSequence</span><span class="params">()</span></span>: Sequence&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> Sequence &#123; <span class="keyword">this</span>.iterator() &#125;<span class="comment">//外部集合的Iterator迭代器对象</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@kotlin</span>.<span class="keyword">internal</span>.InlineOnly</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">Sequence</span><span class="params">(<span class="keyword">crossinline</span> iterator: () -&gt; <span class="type">Iterator</span>&lt;<span class="type">T</span>&gt;)</span></span>: Sequence&lt;T&gt; = <span class="keyword">object</span> : Sequence&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">iterator</span><span class="params">()</span></span>: Iterator&lt;T&gt; = iterator()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过外部传入集合的Iterator迭代器对象，再实例化一个<code>Sequence</code>，<code>Sequence是一个接口，内部有个 iterator () 抽象函数返回一个迭代器对象，然后把传入迭代器对象作为</code>Sequence<code>内部的迭代器，也就是相当于给迭代器加了</code>Sequence`序列的外壳，核心迭代器还是由外部传入的迭代器对象，有点偷梁换柱的概念。</p>
+<p><strong>第2部分:</strong><br>在第一部分中把集合转换成<code>Sequence</code>，接下来就是<code>filter</code>操作，也就是调用<code>Sequence</code>的<code>filter</code>扩展方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> Sequence<span class="type">&lt;T&gt;</span>.<span class="title">filter</span><span class="params">(predicate: (<span class="type">T</span>) -&gt; <span class="type">Boolean</span>)</span></span>: Sequence&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> FilteringSequence(<span class="keyword">this</span>, <span class="literal">true</span>, predicate)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该方法会返回<code>FilteringSequence</code>对象，该对象的构造器有三个参数，其中第一个接收的是个<code>Sequence</code>，第三个参数是个<code>predicate</code>的<code>lambda</code>表达式。<code>FilteringSequence</code>本身继承至<code>Sequence</code>,至于其它细节先不急，待会再看。</p>
+<p><strong>第3部分:</strong><br>调用<code>Sequence</code>的<code>map</code>扩展方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> Sequence<span class="type">&lt;T&gt;</span>.<span class="title">map</span><span class="params">(transform: (<span class="type">T</span>) -&gt; <span class="type">R</span>)</span></span>: Sequence&lt;R&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> TransformingSequence(<span class="keyword">this</span>, transform)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和第二部分很像，只不过该方法会返回<code>TransformingSequence</code>对象，它同样也继承至<code>Sequence</code>。</p>
+<p><strong>第4部分:</strong><br>调用<code>Sequence</code>的<code>take</code>扩展方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> Sequence<span class="type">&lt;T&gt;</span>.<span class="title">take</span><span class="params">(n: <span class="type">Int</span>)</span></span>: Sequence&lt;T&gt; &#123;</span><br><span class="line">    require(n &gt;= <span class="number">0</span>) &#123; <span class="string">&quot;Requested element count <span class="variable">$n</span> is less than zero.&quot;</span> &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">when</span> &#123;</span><br><span class="line">        n == <span class="number">0</span> -&gt; emptySequence()<span class="comment">//1</span></span><br><span class="line">        <span class="keyword">this</span> <span class="keyword">is</span> DropTakeSequence -&gt; <span class="keyword">this</span>.take(n)<span class="comment">//2</span></span><br><span class="line">        <span class="keyword">else</span> -&gt; TakeSequence(<span class="keyword">this</span>, n)<span class="comment">//3 我们此时知道传入Sequence是TransformingSequence，所有走着分支</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为第三部分返回的是<code>TransformingSequence</code>,所有走分支3并返回<code>TakeSequence</code>对象，它同样也继承至<code>Sequence</code>。</p>
+<p>这里同时出现了<code>FilteringSequence</code>、<code>TransformingSequence</code>、<code>TakeSequence</code>三个序列对象，它们的构<br>造器都会接收一个<code>Sequence</code>类型的对象,并且都继承至<code>Sequence</code>。那们先看一下<code>Sequence</code>这个接口：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Sequence</span>&lt;<span class="type">out T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns an [Iterator] that returns the values from the sequence.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Throws an exception if the sequence is constrained to be iterated once and `iterator` is invoked the second time.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="title">iterator</span><span class="params">()</span></span>: Iterator&lt;T&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>回想一下序列的执行流程，先是通过调用<code>Iterable&lt;T&gt;</code>的<code>asSequence()</code>扩展方法，传入一个<code>Iterable&lt;T&gt;</code>对<br>象，并通过该对象实例的<code>iterator()</code>拿到迭代器对象，并把该迭代器对象传入<code>Sequence</code>中，然后调用不同<br>的扩展操作符反复实现了<code>Sequence</code>接口的不同的子类对象，而这些子对象会实现不同的<code>iterator()</code>函数，<br>返回一个新的迭代器对象，但是迭代器的数据则来源原始的迭代器。</p>
+<p>接下来我们就以<code>TakeSequence</code>为例：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">class</span> <span class="title">TakeSequence</span>&lt;<span class="type">T</span>&gt;</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> sequence: Sequence&lt;T&gt;,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> count: <span class="built_in">Int</span></span><br><span class="line">) : Sequence&lt;T&gt;, DropTakeSequence&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span> &#123;</span><br><span class="line">        require(count &gt;= <span class="number">0</span>) &#123; <span class="string">&quot;count must be non-negative, but was <span class="variable">$count</span>.&quot;</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">drop</span><span class="params">(n: <span class="type">Int</span>)</span></span>: Sequence&lt;T&gt; = <span class="keyword">if</span> (n &gt;= count) emptySequence() <span class="keyword">else</span> SubSequence(sequence, n, count)</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">take</span><span class="params">(n: <span class="type">Int</span>)</span></span>: Sequence&lt;T&gt; = <span class="keyword">if</span> (n &gt;= count) <span class="keyword">this</span> <span class="keyword">else</span> TakeSequence(sequence, n)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 重写iterator方法，返回一个新的迭代器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">iterator</span><span class="params">()</span></span>: Iterator&lt;T&gt; = <span class="keyword">object</span> : Iterator&lt;T&gt; &#123;</span><br><span class="line">        <span class="keyword">var</span> left = count</span><br><span class="line">        <span class="keyword">val</span> iterator = sequence.iterator()<span class="comment">//取出构造器传入的Sequence中的迭代器</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">next</span><span class="params">()</span></span>: T &#123;</span><br><span class="line">            <span class="keyword">if</span> (left == <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">throw</span> NoSuchElementException()</span><br><span class="line">            left--</span><br><span class="line">            <span class="keyword">return</span> iterator.next()<span class="comment">//共享迭代器中的数据</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">hasNext</span><span class="params">()</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> left &gt; <span class="number">0</span> &amp;&amp; iterator.hasNext()<span class="comment">//判断是否还有数据</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="源码总结"><a href="#源码总结" class="headerlink" title="源码总结"></a>源码总结</h4><p>序列内部的实现原理是采用状态设计模式，根据不同的操作符的扩展函数，实例化对应的 Sequence 子类<br>对象，每个子类对象重写了 Sequence 接口中的 iterator () 抽象方法，内部实现根据传入的迭代器对象中的<br>数据元素，加以变换、过滤、合并等操作，返回一个新的迭代器对象。这就能解释为什么序列中工作原理<br>是逐个元素执行不同的操作，而不是像普通集合所有元素先执行 A 操作，再所有元素执行 B 操作。这是因<br>为序列内部始终维护着一个迭代器，当一个元素被迭代的时候，就需要依次执行 A,B,C 各个操作后，如果<br>此时没有执行<code>iterator()</code>操作，那么值将会存储在 C 的迭代器中，依次执行，等待原始集合中共享的数据被<br>迭代完毕，或者不满足某些条件终止迭代，最后取出 C 迭代器中的数据即可。</p>
+<p>参考资料:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/sequences.html">kotlin Sequences</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" data-id="cl95pbrdv000xk4vh4n411y7f" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2022/05/25/kotlin-%E5%86%85%E8%81%94%E7%B1%BB/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">kotlin-内联类</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2022</li>
+      
+        <li>WU</li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/copybtn.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

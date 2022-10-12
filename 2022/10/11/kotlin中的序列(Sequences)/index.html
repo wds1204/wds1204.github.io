@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  Kotlin中的序列(Sequences)
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    Kotlin中的序列(Sequences)
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p>除集合之外，kotlin的标准库中还提供了另一种容器——序列(<code>Sequence&lt;T&gt;</code>)。序列同样提供了<code>Iterable</code>相<br>同的函数，但实现的是另一种方法进行多步骤的集合处理。如果你熟悉Java，其实就是Java8版本中<code>Stream</code>的翻版。</p>
+        <p>除集合之外，kotlin的标准库中还提供了另一种容器——序列(<code>Sequence&lt;T&gt;</code>)。序列同样提供了<code>Iterable</code>相<br>同的函数，但实现的是另一种方法进行多步骤的集合处理。如果你熟悉Java，其实就是Java8版本中<code>Stream</code>的翻版。</p>
 <span id="more"></span>
 
 <h3 id="Sequences和Iterable的区别"><a href="#Sequences和Iterable的区别" class="headerlink" title="Sequences和Iterable的区别"></a>Sequences和Iterable的区别</h3><p>当Iterable的处理包含了多个步骤时，它们会优先执行每个处理步骤完成并返回其结果——中间集合，后续<br>的操作在此集合的基础上执行。而序列的多步骤处理会延迟执行，仅当请求整个处理链的结果时才会进行<br>实际的计算。而且操作顺序也不同：Sequence对每个元素逐个执行所有步骤，反过来，Iterable 完成整个<br>集合的每个步骤，然后进行下一步。</p>
@@ -121,7 +122,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" data-id="cl95pbrdv000xk4vh4n411y7f" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" data-id="cl95pogpj000xyqvh28ai6j2w" class="article-share-link">
         分享
       </a>
       
@@ -154,23 +155,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -254,13 +257,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

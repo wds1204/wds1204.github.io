@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  用动画带你学习Git原理
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    用动画带你学习Git原理
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p>Git已经是我们日常工作开发中最常用到的分布式版本控制系统，大部分人也都知道如何使用它，知道有哪些命令。但同样很多人都在git操作中摔过跟头、翻过车，往往都是通过在网上搜索一番，按照搜索结果敲下命令，或许能解决或许不能。之所以这样，是因为你并不了解每个命令背后的原理，如果了解其本质，就可以更好的帮你梳理思路，而不会迷失在Git众多命令和参数上。这篇文章的目的是用“可视化”动画的形讲解日常开发中常用的命令，让你更好的了解Git的本质。</p>
+        <p>Git已经是我们日常工作开发中最常用到的分布式版本控制系统，大部分人也都知道如何使用它，知道有哪些命令。但同样很多人都在git操作中摔过跟头、翻过车，往往都是通过在网上搜索一番，按照搜索结果敲下命令，或许能解决或许不能。之所以这样，是因为你并不了解每个命令背后的原理，如果了解其本质，就可以更好的帮你梳理思路，而不会迷失在Git众多命令和参数上。这篇文章的目的是用“可视化”动画的形讲解日常开发中常用的命令，让你更好的了解Git的本质。</p>
 <span id="more"></span>
 
 <h3 id="Git仓库数据结构"><a href="#Git仓库数据结构" class="headerlink" title="Git仓库数据结构"></a>Git仓库数据结构</h3><p>在开始之前，需要对Git有个大体的结构的认知–Git仓库的数据结构，如下图所示<br><img src="/../images/git/git%E7%BB%93%E6%9E%84.png" alt="image.png"></p>
@@ -157,7 +158,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="cl95pbre20018k4vh78y1h9db" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" data-id="cl95pogpq0017yqvh1x5peppz" class="article-share-link">
         分享
       </a>
       
@@ -199,23 +200,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -299,13 +302,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

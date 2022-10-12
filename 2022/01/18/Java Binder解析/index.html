@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  Java Binder解析
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    Java Binder解析
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p>在Native Binder的系统服务注册过程中，核心是<code>ServiceManager</code>,在Java Binder中，也有一个<code>ServiceManager</code>，然而这个<code>ServiceManager</code>是个Java文件。在Java Binder注册系统服务到也需要用到<code>ServiceManager</code>，那么需要选择一个系统服务来窥探这一过程，这里以常见的<code>ActivityManagerServcie</code>（AMS）为例。</p>
+        <p>在Native Binder的系统服务注册过程中，核心是<code>ServiceManager</code>,在Java Binder中，也有一个<code>ServiceManager</code>，然而这个<code>ServiceManager</code>是个Java文件。在Java Binder注册系统服务到也需要用到<code>ServiceManager</code>，那么需要选择一个系统服务来窥探这一过程，这里以常见的<code>ActivityManagerServcie</code>（AMS）为例。</p>
 <span id="more"></span>
 
 <h3 id="1-将AMS注册到ServiceManager"><a href="#1-将AMS注册到ServiceManager" class="headerlink" title="1-将AMS注册到ServiceManager"></a>1-将AMS注册到ServiceManager</h3><p>在AMS的<code>setSystemProcess</code>方法中，会调用<code>ServiceManager</code>的<code>addService</code>方法，至于为什么会调用AMS的<code>setSystemProcess</code>方法可自行查阅<code>SystemService</code>进程的启动流程。</p>
@@ -227,7 +228,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/18/Java%20Binder%E8%A7%A3%E6%9E%90/" data-id="cl95pbrdi0009k4vhfh8733on" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/18/Java%20Binder%E8%A7%A3%E6%9E%90/" data-id="cl95pogp40009yqvh0k6ub8ip" class="article-share-link">
         分享
       </a>
       
@@ -269,23 +270,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -369,13 +372,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

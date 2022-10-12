@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  okhttp拦截器之CacheInterceptor
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    okhttp拦截器之CacheInterceptor
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p><code>CacheInterceptor</code>拦截器官方给个注释：Serves requests from the cache and writes responses to the cache.用于从缓存中获取相应和把相应写入缓存中，<code>okhttp</code>缓存默认是不开启,需要通过如下方式设置<code>Cache</code>。</p>
+        <p><code>CacheInterceptor</code>拦截器官方给个注释：Serves requests from the cache and writes responses to the cache.用于从缓存中获取相应和把相应写入缓存中，<code>okhttp</code>缓存默认是不开启,需要通过如下方式设置<code>Cache</code>。</p>
 <span id="more"></span>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> client = OkHttpClient.Builder()</span><br><span class="line">        .cache(</span><br><span class="line">            Cache(</span><br><span class="line">                directory = File(application.cacheDir, <span class="string">&quot;http_cache&quot;</span>),</span><br><span class="line">                maxSize = <span class="number">50L</span> * <span class="number">1024L</span> * <span class="number">1024L</span></span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">        .build()</span><br></pre></td></tr></table></figure>
 <p>配置完<code>HttpClient</code>网络缓存后，这样就有了缓存的效果,但也可以说没有效果。因为如果你想在网络断开的情况下再次请求网络后加载缓存的内容,如果只有这么设置可能不够，可能需要再request中加入CacheControl.FORCE_CACHE这个策略。代码如下：</p>
@@ -191,7 +192,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/" data-id="cl95pbrdw0011k4vh2mwg2a3k" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/" data-id="cl95pogpk0010yqvhekt51ris" class="article-share-link">
         分享
       </a>
       
@@ -233,23 +234,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -333,13 +336,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

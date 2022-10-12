@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  Native Binder机制之ServiceManager
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    Native Binder机制之ServiceManager
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的获取过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说到过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。所以首先要了解<code>ServiceManager</code>的启动过程，这样更有助于理解系统服务的注册过程和获取过程。</p>
+        <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的获取过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说到过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。所以首先要了解<code>ServiceManager</code>的启动过程，这样更有助于理解系统服务的注册过程和获取过程。</p>
 <span id="more"></span>
 <h3 id="1-ServiceManager的入口函数"><a href="#1-ServiceManager的入口函数" class="headerlink" title="1. ServiceManager的入口函数"></a>1. ServiceManager的入口函数</h3><blockquote>
 <p>frameworks/native/cmds/servicemanager/service_manager.c</p>
@@ -136,7 +137,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" data-id="cl95pbrdj000ak4vh32i9e1lp" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/07/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8BServiceManager/" data-id="cl95pogp5000ayqvhfs8ihyw1" class="article-share-link">
         分享
       </a>
       
@@ -178,23 +179,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -278,13 +281,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  okhttp框架解析
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    okhttp框架解析
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p>作为Android程序员除了Google官方提供Android源码，开发项目时还要用很多优秀的三方开源库帮助我们快速开发，OKhttp3作为square开源的网络库，已成Android程序员必用的网络库，因为其优秀的代码设计、完善的网络请求功能，也被Google收入官方源码实现。作为开发者学习作为网络的网络有很多分析OkHttp的文章，大多都是讲OkHttp的使用、框架结构以及设计模式等这些内容。而这些只是OkHttp的一些手段和方式，它本质上一个网络请求的库，我们阅读源码的时，实现只不过是为了达到目的一种方式，脱离目的的实现，如缘木求鱼。所以在分析OkHttp源码的时一定要结合http本身的特性，不然就很容易偏离事物本质。</p>
+        <p>作为Android程序员除了Google官方提供Android源码，开发项目时还要用很多优秀的三方开源库帮助我们快速开发，OKhttp3作为square开源的网络库，已成Android程序员必用的网络库，因为其优秀的代码设计、完善的网络请求功能，也被Google收入官方源码实现。作为开发者学习作为网络的网络有很多分析OkHttp的文章，大多都是讲OkHttp的使用、框架结构以及设计模式等这些内容。而这些只是OkHttp的一些手段和方式，它本质上一个网络请求的库，我们阅读源码的时，实现只不过是为了达到目的一种方式，脱离目的的实现，如缘木求鱼。所以在分析OkHttp源码的时一定要结合http本身的特性，不然就很容易偏离事物本质。</p>
 <span id="more"></span>
 
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">thread &#123;</span><br><span class="line">    <span class="keyword">val</span> socket = Socket(<span class="string">&quot;hencoder.com&quot;</span>, <span class="number">80</span>)</span><br><span class="line">    <span class="keyword">val</span> reader = BufferedReader(InputStreamReader(socket.getInputStream()))</span><br><span class="line">    <span class="keyword">val</span> writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))</span><br><span class="line"></span><br><span class="line">    writer.write(<span class="string">&quot;GET / HTTP/1.1\nHost: hencoder.com\n\n&quot;</span>)</span><br><span class="line">    writer.flush()</span><br><span class="line"></span><br><span class="line">    println(</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">         <span class="subst">$&#123;reader.readText()&#125;</span></span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span>.trimIndent()</span><br><span class="line">          )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -155,7 +156,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/02/04/okhttp%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/" data-id="cl95pbre10016k4vhc12cclsi" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/02/04/okhttp%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/" data-id="cl95pogpn0015yqvh3sqmdp3j" class="article-share-link">
         分享
       </a>
       
@@ -197,23 +198,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -297,13 +300,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

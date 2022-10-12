@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  APK体积优化之重复资源
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    APK体积优化之重复资源
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p>之前对公司的项目做了一些列APK体积的优化，其中涉及到一个小点，相同资源因命名方式的不同，在构建时都打入到APK中，导致体积增大。</p>
+        <p>之前对公司的项目做了一些列APK体积的优化，其中涉及到一个小点，相同资源因命名方式的不同，在构建时都打入到APK中，导致体积增大。</p>
 <span id="more"></span>
 
 <h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>目前大部分中大型App的研发是由各个业务团队共同协作完成，这种组件化的开发模式就会存一个常见的问题, 不同的业务团队在使用各资源文件（如：drawable、layout等）时,为了避免引发资源覆盖的问题，每<br>个业务团队都会为自己的资源文件名添加前缀。这样就会导致有些资源文件内容其实相同，但因为名称的不同而重复存在,最终在构建时都加入到APK包中，因而导致包体积增大。为了解决这类“重复资源”的问题,<br>但又不想增加各团队在协同相同资源开发的成本，因而采用在App构建时自动删除重复的资源文件，只保留其中一份, 而 其它相同资源都指向这个文件，这样对开发人员变得相对透明，不必关心资源是否重复，<br>在构建时也避免了APK体积不必要的增大。从收益的角度来看，减少apk大小因业务而定，但构建时间会有所增加。</p>
@@ -131,7 +132,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="cl95pbrdn000ik4vhhw1rbg4c" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2021/12/22/apk-size-resources/" data-id="cl95pogpe000oyqvhb9ik8ogh" class="article-share-link">
         分享
       </a>
       
@@ -173,23 +174,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -273,13 +276,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

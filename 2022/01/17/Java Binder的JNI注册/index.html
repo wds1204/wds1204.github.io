@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  Java Binder的JNI注册
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    Java Binder的JNI注册
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <p>在Binder机制的架构中，分为Java Binder和Native Binder。Java层的Binder可以说是Native层的Binder的镜像，而Java Binder这个镜像归根结底还是依赖Native Binder层的运转，那么Java Binder要和Native Binder肯定需要建立某种联系进行通信，这种联系就是通过JNI，</p>
+        <p>在Binder机制的架构中，分为Java Binder和Native Binder。Java层的Binder可以说是Native层的Binder的镜像，而Java Binder这个镜像归根结底还是依赖Native Binder层的运转，那么Java Binder要和Native Binder肯定需要建立某种联系进行通信，这种联系就是通过JNI，</p>
 <span id="more"></span>
 
 <h3 id="初始化Java-Binder框架"><a href="#初始化Java-Binder框架" class="headerlink" title="初始化Java Binder框架"></a>初始化Java Binder框架</h3><p>JNI的注册是在Zygote进程启动过程中进行的，代码如下所示：</p>
@@ -128,7 +129,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" data-id="cl95pbrdf0006k4vhfva39jdc" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/01/17/Java%20Binder%E7%9A%84JNI%E6%B3%A8%E5%86%8C/" data-id="cl95pogp20006yqvhbfz7h9l9" class="article-share-link">
         分享
       </a>
       
@@ -170,23 +171,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -270,13 +273,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

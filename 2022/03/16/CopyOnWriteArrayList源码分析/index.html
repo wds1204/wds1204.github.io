@@ -12,6 +12,7 @@
     
     modi.wu
   </title>
+  <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -38,12 +39,12 @@
     
     <header class="article-header">
       
-
-<h1 class="article-title" itemprop="name">
-  CopyOnWriteArrayList源码分析
-</h1>
-
-
+  
+  <h1 class="article-title" itemprop="name">
+    CopyOnWriteArrayList源码分析
+  </h1>
+  
+  
 
     </header>
     
@@ -71,7 +72,7 @@
       
       
       
-      <!--  -->
+        <!--  -->
 <span id="more"></span>
 <h3 id="CopyOnWriteArrayList源码简析"><a href="#CopyOnWriteArrayList源码简析" class="headerlink" title="CopyOnWriteArrayList源码简析"></a>CopyOnWriteArrayList源码简析</h3><p>在开发中，往往读操作的使用频率会远高于其他操作，而<code>CopyOnWriteArrayList</code>就是一种读操作效率远高于写操作效率的List，一起来看看吧</p>
 <h4 id="CopyOnWriteArrayList类图"><a href="#CopyOnWriteArrayList类图" class="headerlink" title="CopyOnWriteArrayList类图:"></a>CopyOnWriteArrayList类图:</h4><p><img src="/../images/copyOnWrite/CopyOnWriteArrayList.png" alt="image.png"></p>
@@ -97,7 +98,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/03/16/CopyOnWriteArrayList%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" data-id="cl95pbrdc0003k4vh7szw5c4l" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/03/16/CopyOnWriteArrayList%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" data-id="cl95pogou0001yqvhci7d5c5r" class="article-share-link">
         分享
       </a>
       
@@ -139,23 +140,25 @@
 </section>
     <footer class="footer">
   <div class="outer">
-    <div class="float-right">
-      <ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
-</ul>
-    </div>
     <ul class="list-inline">
       <li>modi.wu &copy; 2022</li>
       
-        <li>WU</li>
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
       
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
   </div>
 </footer>
   </main>
@@ -239,13 +242,9 @@
 
 
 
-<script src="/js/copybtn.js"></script>
-
-
-
-
 
 <script src="/js/tocbot.min.js"></script>
+
 
 <script>
   // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/

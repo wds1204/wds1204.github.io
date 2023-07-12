@@ -66,7 +66,9 @@
       
       
       
-        <p>Android事件分发机制首先会将点击事件传递到Activity中，具体是执行dispatchTouchEvent()进行事件分发。</p>
+        <span id="more"></span>
+
+<p>Android事件分发机制首先会将点击事件传递到Activity中，具体是执行dispatchTouchEvent()进行事件分发。</p>
 <p>Activity#dispatchTouchEvent</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">   public boolean dispatchTouchEvent(MotionEvent ev) &#123;</span><br><span class="line">       if (ev.getAction() == MotionEvent.ACTION_DOWN) &#123;</span><br><span class="line">       onUserInteraction();</span><br><span class="line">       &#125;</span><br><span class="line">       //如果返回true，Activity.dispatchTouchEvent就返回true，则方法结束。</span><br><span class="line"></span><br><span class="line">       if (getWindow().superDispatchTouchEvent(ev)) &#123;</span><br><span class="line">       return true;</span><br><span class="line">       &#125;</span><br><span class="line">       return onTouchEvent(ev);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>getWindow()返回的是PhoneWindow,内部调用的是DecorView的dispatchTouchEvent方法。<br>DecorView继承FrameLayout,也是所有页面的父类。FrameLayout是ViewGroup的子类，故Activity的事件分发与ViewGroup一致。</p>

@@ -56,6 +56,34 @@
       
   
   <h2 class="archive-article-title" itemprop="name">
+    <a href="/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/">okhttp拦截器之CacheInterceptor</a>
+  </h2>
+  
+  
+
+      <a href="/2022/02/23/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BCacheInterceptor/" class="archive-article-date">
+  <time datetime="2022-02-23T14:49:02.000Z" itemprop="datePublished">02/23</time>
+</a>
+    </header>
+    
+      <p><code>CacheInterceptor</code>拦截器官方给个注释：Serves requests from the cache and writes responses to the cache.用于从缓存中获取相应和把相应写入缓存中，<code>okhttp</code>缓存默认是不开启,需要通过如下方式设置<code>Cache</code>。</p>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
     <a href="/2022/02/12/okhttp%E6%8B%A6%E6%88%AA%E5%99%A8%E4%B9%8BBridgeInterceptor/">okhttp拦截器之BridgeInterceptor</a>
   </h2>
   
@@ -141,7 +169,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2022/02/03/HTTPS/" rel="gallery_cl9eecdqx0003fsvh4vlvgoji">
+        <a class="article-gallery-img" href="/2022/02/03/HTTPS/" rel="gallery_clnhp5zlu0008ozvh5y209df1">
           <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/TLS.png?raw=true" itemprop="image">
         </a>
       
@@ -175,7 +203,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="gallery_cl9eecdrs001qfsvhfq21fk19">
+        <a class="article-gallery-img" href="/2022/01/26/%E7%94%A8%E5%8A%A8%E7%94%BB%E5%B8%A6%E4%BD%A0%E5%AD%A6%E4%B9%A0Git%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="gallery_clnhp5zn7003nozvheb6hcrn6">
           <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/git.png?raw=true" itemprop="image">
         </a>
       
@@ -307,45 +335,6 @@
     </header>
     
       <p>上篇文章以<code>MediaPlayService</code>为例，讲解了系统服务进程注册到<code>ServiceManager</code>的过程,那与之相对应的过程是服务的获取过程。但在这之前需要先了解<code>ServiceManager</code>，之前有说到过<code>defaultServiceManager</code>函数返回<code>BpServiceManager</code>,然后通过命令发送给handle为0的服务端，这个服务端就是<code>ServiceManager</code>。所以首先要了解<code>ServiceManager</code>的启动过程，这样更有助于理解系统服务的注册过程和获取过程。</p>
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-  
-  </div>
-  </div>
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2021" class="archive-year">2021</a>
-    </div>
-    <div class="archives">
-      
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/">Native Binder机制之系统服务注册</a>
-  </h2>
-  
-  
-
-      <a href="/2021/12/30/Native%20Binder%E6%9C%BA%E5%88%B6%E4%B9%8B%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" class="archive-article-date">
-  <time datetime="2021-12-30T13:59:21.000Z" itemprop="datePublished">12/30</time>
-</a>
-    </header>
-    
-      <p>Binder是Android系统提供的一种IPC(进程间通信)机制。由于Android是基于Linux的内核，因此除了Binder之外，还有其他IPC机制，例如管道和socket等，Binder相对与其他IPC机制来说，更为灵活和方便。对于学习Android的同学来说，是需要也最难掌握的就是Binder机制了，因为Android系统基本上可以看做一个基于Binder通信的C/S架构。它就像网络一样，把Android系统中的各个部分联系在一起，所以要想较好的理解Android，那Binder机制就是一个跨不过去的坎。</p>
     
     
     

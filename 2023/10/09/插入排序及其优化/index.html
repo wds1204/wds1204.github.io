@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    插入排序及其优化 |
+    
+    modi.wu
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-插入排序及其优化" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    插入排序及其优化
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" class="article-date">
+  <time datetime="2023-10-09T01:45:24.000Z" itemprop="datePublished">2023-10-09</time>
+</a>
+      
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <!--  -->
+<span id="more"></span>
+<h3 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h3><p>插入排序算法的核心是，把一个原本序列分成有序区和无序区，然后通过比较和后移把无序区的元素插入有序区内。<br />把一个原本序列分成有序区和无序区，如下图所示：<br /><img src="/../images/selectsort/image.png" alt="image.png"><br />然后通过不断的比较和后移把无序区的元素插入有序区内，为了更直观的展示这一过程，如下动画。<img src="/../images/selectsort/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8Fgif.gif" alt="插入排序"></p>
+<ol>
+<li>将原序列分成有序区和无序区。a[0…i-1]为有序区，a[i…n] 为无序区。（i从1开始）</li>
+<li>从无序区中取出第一个元素，即a[i]，在有序区序列中从后向前扫描。</li>
+<li>如果有序元素大于a[i]，将有序元素后移到下一位置。有序元原本的位置赋值为a[i]</li>
+<li>重复步骤3，直到找到小于或者等于a[i]的有序元素.</li>
+<li>重复步骤2~4，直到无序区元素为0。</li>
+</ol>
+<p>代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : Comparable&lt;T&gt;</span>&gt; MutableList<span class="type">&lt;T&gt;</span>.<span class="title">insertSort</span><span class="params">()</span></span>: MutableList&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span> until size) &#123;</span><br><span class="line">        <span class="keyword">var</span> j = i</span><br><span class="line">        <span class="keyword">while</span> (j &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">get</span>(j) &lt; <span class="keyword">get</span>(j - <span class="number">1</span>)) &#123;</span><br><span class="line">                swap(j, j - <span class="number">1</span>)</span><br><span class="line">                j--</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个解法有个可以优化的点，就是它会不断的发生元素的交换，为此可以改进为当有序元素大于a[i],只将有序元素后移到下一位。然后重复这步骤，直到找到小于或等于a[i]的有序元素，再将a[i]插入到该有序元素的下一个位置中。</p>
+<ol>
+<li>将原序列分成有序区和无序区。a[0…i-1]为有序区，a[i…n] 为无序区。（i从1开始）</li>
+<li>从无序区中取出第一个元素，即a[i]，在有序区序列中从后向前扫描。</li>
+<li>如果有序元素大于a[i]，将有序元素后移到下一位置。</li>
+<li>重复步骤3，直到找到小于或者等于a[i]的有序元素，将a[i]插入到该有序元素的下一位置中。</li>
+<li>重复步骤2~4，直到无序区元素为0。</li>
+</ol>
+<p><img src="/../images/selectsort/%E4%BC%98%E5%8C%96%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8Fgif.gif" alt="优化插入排序"><br />实现优化后的插入排序的直接插入排序(语言kotlin)，代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 直接插入排序</span></span><br><span class="line"><span class="comment"> * 将原本序列分为有序区和无序区，然后通过比较和后移操作将无序区元素插入到有序区中</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : Comparable&lt;T&gt;</span>&gt; MutableList<span class="type">&lt;T&gt;</span>.<span class="title">insertSort</span><span class="params">()</span></span>: MutableList&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span> until size) &#123;</span><br><span class="line">        <span class="keyword">var</span> j = i - <span class="number">1</span></span><br><span class="line">        <span class="keyword">val</span> temp = <span class="keyword">get</span>(i)</span><br><span class="line">        <span class="keyword">while</span> (j &gt;= <span class="number">0</span> &amp;&amp; temp &lt; <span class="keyword">get</span>(j)) &#123;</span><br><span class="line">            <span class="keyword">set</span>(j + <span class="number">1</span>, <span class="keyword">get</span>(j))</span><br><span class="line">            j--</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span>(j + <span class="number">1</span>, temp)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>时间复杂度：<br />直接插入排序的耗时操作有：比较和后移赋值。<br />最好的情况：原有的序列是顺序，比较的次数是n-1次,后移赋值的操作是0次，时间复杂度即即O(n)<br />最坏的情况：原有的序列是降序，比较的次数是n*(n-1)/2次,后移赋值的操作次数比较的次数再加上n-1次。即O(n^2)<br><a name="UavoG"></a></p>
+<h2 id="二分查找插入排序"><a href="#二分查找插入排序" class="headerlink" title="二分查找插入排序"></a>二分查找插入排序</h2><p><a name="HCw5o"></a></p>
+<h3 id="概念：-1"><a href="#概念：-1" class="headerlink" title="概念："></a>概念：</h3><p>二分查找插入排序的原理：是直接插入排序的一个变种，区别是：在有序区中查找新元素插入位置时，为了减少元素比较次数提高效率，采用二分查找算法进行插入位置的确定。<br />具体如下<strong>（实现为升序）</strong>：<br />设数组为a[0…n]。</p>
+<ol>
+<li><p>将原序列分成有序区和无序区。a[0…i-1]为有序区，a[i…n] 为无序区。（i从1开始）</p>
+</li>
+<li><p>从无序区中取出第一个元素，即a[i]，使用二分查找算法在有序区中查找要插入的位置索引j。</p>
+</li>
+<li><p>将a[j]到a[i-1]的元素后移，并将a[i]赋值给a[j]。</p>
+</li>
+<li><p>重复步骤2~3，直到无序区元素为0。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 二分插入排序,是对直接插入排序的一个改进。</span></span><br><span class="line"><span class="comment"> * 因为在有序区找到一个插入的位置，可以使用二分查找，减少元素比较的次数提高效率</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : Comparable&lt;T&gt;</span>&gt; MutableList<span class="type">&lt;T&gt;</span>.<span class="title">binaryInsertSort</span><span class="params">()</span></span>: MutableList&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span> until size) &#123;</span><br><span class="line">        <span class="keyword">var</span> j = i - <span class="number">1</span></span><br><span class="line">        <span class="keyword">val</span> temp = <span class="keyword">get</span>(i)</span><br><span class="line">        <span class="keyword">val</span> index = <span class="keyword">this</span>.binarySearch(temp, fromIndex = <span class="number">0</span>, toIndex = j)</span><br><span class="line">        <span class="keyword">while</span> (j &gt;= <span class="number">0</span> &amp;&amp; j &gt; index) &#123;</span><br><span class="line">            <span class="keyword">set</span>(j + <span class="number">1</span>, <span class="keyword">get</span>(j))</span><br><span class="line">            j--</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span>(index, temp)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 二分查找</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : Comparable&lt;T&gt;</span>&gt; List<span class="type">&lt;T&gt;</span>.<span class="title">binarySearch</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    element: <span class="type">T</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    fromIndex: <span class="type">Int</span> = <span class="number">0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    toIndex: <span class="type">Int</span> = size,</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> low = fromIndex</span><br><span class="line">    <span class="keyword">var</span> high = toIndex - <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">        <span class="keyword">val</span> mid = (low + high) / <span class="number">2</span><span class="comment">// safe from overflows</span></span><br><span class="line">        <span class="keyword">val</span> midVal = <span class="keyword">get</span>(mid)</span><br><span class="line">        <span class="keyword">if</span> (midVal &gt; element) &#123;</span><br><span class="line">            high = mid - <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            low = mid + <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> low</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>   时间复杂度：O(n^2)<br />二分查找插入位置，因为不是查找相等值，而是基于比较查插入合适的位置，所以必须查到最后一个元素才知道插入位置。<br />二分查找最坏时间复杂度：当2^X&gt;=n时，查询结束，所以查询的次数就为x，而x等于log2n<strong>（以2为底，n的对数）</strong>。即O(log2n)所以，二分查找排序比较次数为：x=log2n<br />二分查找插入排序耗时的操作有：比较 + 后移赋值。时间复杂度如下：</p>
+</li>
+<li><p>最好情况：查找的位置是有序区的最后一位后面一位，则无须进行后移赋值操作，其比较次数为：log2n  。即O(log2n)</p>
+</li>
+<li><p>最坏情况：查找的位置是有序区的第一个位置，则需要的比较次数为：log2n，需要的赋值操作次数为n(n-1)/2加上 (n-1) 次。即O(n^2)</p>
+</li>
+<li><p> 渐进时间复杂度（平均时间复杂度）：O(n^2)</p>
+</li>
+<li><p> 空间复杂度：O(1)<br />从实现原理可知，二分查找插入排序是在原输入数组上进行后移赋值操作的（称“就地排序”），所需开辟的辅助空间跟输入数组规模无关，所以空间复杂度为：O(1)<br><a name="fi3yG"></a></p>
+<h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h2><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F">维基百科</a><br />希尔排序也称递减增量排序算法，是插入排序的一种更高效的改进版本。</p>
+</li>
+</ol>
+<ul>
+<li>如果一个较小的数据在已排好序的数组的末端，要让这个数据放到正确的位置。如果使用直接插入排序，需要进行n次的比较和交换才能。因为在插入排序中每次只能将数据移动一位。</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 希尔排序也是对直接插入排序的优化，</span></span><br><span class="line"><span class="comment"> * 突破O(n^2)屏障</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : Comparable&lt;T&gt;</span>&gt; MutableList<span class="type">&lt;T&gt;</span>.<span class="title">shellSort</span><span class="params">()</span></span>: MutableList&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">var</span> gap = size / <span class="number">2</span></span><br><span class="line">    <span class="keyword">while</span> (gap &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> gap until size step <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">val</span> tmp = <span class="keyword">get</span>(i)</span><br><span class="line">            <span class="keyword">var</span> j = i</span><br><span class="line">            <span class="keyword">while</span> (j &gt;= gap &amp;&amp; tmp &lt; <span class="keyword">get</span>(j - gap)) &#123;</span><br><span class="line">                <span class="keyword">set</span>(j, <span class="keyword">get</span>(j - gap))</span><br><span class="line">                j -= gap</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">set</span>(j, tmp)</span><br><span class="line">        &#125;</span><br><span class="line">        gap /= <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" data-id="clni9dqa2001uvyvhch0l7o6k" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">关于正则表达</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2023</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

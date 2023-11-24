@@ -92,7 +92,7 @@
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 直接插入排序</span></span><br><span class="line"><span class="comment"> * 将原本序列分为有序区和无序区，然后通过比较和后移操作将无序区元素插入到有序区中</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : Comparable&lt;T&gt;</span>&gt; MutableList<span class="type">&lt;T&gt;</span>.<span class="title">insertSort</span><span class="params">()</span></span>: MutableList&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span> until size) &#123;</span><br><span class="line">        <span class="keyword">var</span> j = i - <span class="number">1</span></span><br><span class="line">        <span class="keyword">val</span> temp = <span class="keyword">get</span>(i)</span><br><span class="line">        <span class="keyword">while</span> (j &gt;= <span class="number">0</span> &amp;&amp; temp &lt; <span class="keyword">get</span>(j)) &#123;</span><br><span class="line">            <span class="keyword">set</span>(j + <span class="number">1</span>, <span class="keyword">get</span>(j))</span><br><span class="line">            j--</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span>(j + <span class="number">1</span>, temp)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>时间复杂度：<br />直接插入排序的耗时操作有：比较和后移赋值。<br />最好的情况：原有的序列是顺序，比较的次数是n-1次,后移赋值的操作是0次，时间复杂度即即O(n)<br />最坏的情况：原有的序列是降序，比较的次数是n*(n-1)/2次,后移赋值的操作次数比较的次数再加上n-1次。即O(n^2)<br><a name="UavoG"></a></p>
 <h2 id="二分查找插入排序"><a href="#二分查找插入排序" class="headerlink" title="二分查找插入排序"></a>二分查找插入排序</h2><p><a name="HCw5o"></a></p>
-<h3 id="概念：-1"><a href="#概念：-1" class="headerlink" title="概念："></a>概念：</h3><p>二分查找插入排序的原理：是直接插入排序的一个变种，区别是：在有序区中查找新元素插入位置时，为了减少元素比较次数提高效率，采用二分查找算法进行插入位置的确定。<br />具体如下<strong>（实现为升序）</strong>：<br />设数组为a[0…n]。</p>
+<h3 id="概念：-1"><a href="#概念：-1" class="headerlink" title="概念："></a>概念：</h3><p>二分查找插入排序的原理：是直接插入排序的一个变种，区别是：在有序区中查找新元素插入位置时，为了减少元素比较次数提高效率，采用二分查找算法进行插入位置的确定。<br />具体如下<strong>实现为升</strong>：假设数组为a[0…n]。<br /></p>
 <ol>
 <li><p>将原序列分成有序区和无序区。a[0…i-1]为有序区，a[i…n] 为无序区。（i从1开始）</p>
 </li>
@@ -124,7 +124,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" data-id="clni8e2ur0000vwvh9ac69adh" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" data-id="clpcxytpr0036envhaciiciz6" class="article-share-link">
         分享
       </a>
       
@@ -135,6 +135,15 @@
   
   
 <nav class="article-nav">
+  
+  <a href="/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      AGP与资源构建交互的相关API
+      
+    </div>
+  </a>
   
   
   <a href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" class="article-nav-link">

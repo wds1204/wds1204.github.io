@@ -56,6 +56,40 @@
       
   
   <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">AGP资源链接之LinkApplicationAndroidResourcesTask流程分析</a>
+  </h2>
+  
+  
+
+      <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="archive-article-date">
+  <time datetime="2023-12-02T07:01:14.000Z" itemprop="datePublished">12/02</time>
+</a>
+    </header>
+    
+      <!-- -->
+<p>AGP link资源的过程所执行task的名称叫<code>processDebugResource</code>，我们需要根据task名称找到具体的实现类，Gradle提供了一个很实用的命令，可根据任务名查询实现类。</p>
+<blockquote>
+<p>./gradlew help –task <taskName><br>查找<code>processDebugResources</code>:</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew <span class="built_in">help</span> --task processDebugResources</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :<span class="built_in">help</span></span></span><br><span class="line">Detailed task information for processDebugResources</span><br><span class="line">Path</span><br><span class="line">     :app:processDebugResources</span><br><span class="line">Type</span><br><span class="line">     LinkApplicationAndroidResourcesTask (com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask)</span><br><span class="line">Description</span><br><span class="line">     -</span><br><span class="line">Group</span><br><span class="line">     -</span><br></pre></td></tr></table></figure>
+<p>从终端的输出信息我们可以发现具体的实现类为<code>com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask</code>。</p>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
     <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">AGP资源编译之MergeMergeResources流程分析</a>
   </h2>
   
@@ -140,7 +174,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clpmycb5l001yszvh5vale3t5">
+        <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clpnr716g001rxevh52qx512f">
           <img src="https://raw.githubusercontent.com/wds1204/wds1204.github.io/main/images/regex-regular-expression.webp" itemprop="image">
         </a>
       
@@ -174,7 +208,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clpmycb4o0007szvheho1has0">
+        <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clpnr71560008xevhgldo3g4h">
           <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/eventdispatch/event_dispatch.png?raw=true" itemprop="image">
         </a>
       
@@ -318,34 +352,6 @@
     </header>
     
       <p>除集合之外，kotlin的标准库中还提供了另一种容器——序列(<code>Sequence&lt;T&gt;</code>)。序列同样提供了<code>Iterable</code>相<br>同的函数，但实现的是另一种方法进行多步骤的集合处理。如果你熟悉Java，其实就是Java8版本中<code>Stream</code>的翻版。</p>
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2022/05/25/kotlin-%E5%86%85%E8%81%94%E7%B1%BB/">kotlin-内联类</a>
-  </h2>
-  
-  
-
-      <a href="/2022/05/25/kotlin-%E5%86%85%E8%81%94%E7%B1%BB/" class="archive-article-date">
-  <time datetime="2022-05-25T15:39:18.000Z" itemprop="datePublished">05/25</time>
-</a>
-    </header>
-    
-      <p>Kotlin 1.5 宣布了一个重磅特性 value class，这是一个非常实用的特性，提高代码的可读性同时，还可以提高性能，因为编译器会对它进行更深层次的优化，减少对象的创建。</p>
     
     
     

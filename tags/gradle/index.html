@@ -8,7 +8,7 @@
   
   
   <title>
-    Tag: gradle |
+    Tag: Gradle |
     
     modi.wu
   </title>
@@ -34,12 +34,128 @@
     <section class="outer">
   <article class="articles">
     
-    <h1 class="page-type-title">#&nbspgradle</h1>
+    <h1 class="page-type-title">#&nbspGradle</h1>
     
   
   
   
   
+  
+  
+  <div class="archives-wrap">
+    <div class="archive-year-wrap">
+      <a href="/archives/2023" class="archive-year">2023</a>
+    </div>
+    <div class="archives">
+      
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">AGP资源链接之LinkApplicationAndroidResourcesTask流程分析</a>
+  </h2>
+  
+  
+
+      <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="archive-article-date">
+  <time datetime="2023-12-02T07:01:14.000Z" itemprop="datePublished">12/02</time>
+</a>
+    </header>
+    
+      <!-- -->
+<p>AGP link资源的过程所执行task的名称叫<code>processDebugResource</code>，我们需要根据task名称找到具体的实现类，Gradle提供了一个很实用的命令，可根据任务名查询实现类。</p>
+<blockquote>
+<p>./gradlew help –task <taskName><br>查找<code>processDebugResources</code>:</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew <span class="built_in">help</span> --task processDebugResources</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :<span class="built_in">help</span></span></span><br><span class="line">Detailed task information for processDebugResources</span><br><span class="line">Path</span><br><span class="line">     :app:processDebugResources</span><br><span class="line">Type</span><br><span class="line">     LinkApplicationAndroidResourcesTask (com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask)</span><br><span class="line">Description</span><br><span class="line">     -</span><br><span class="line">Group</span><br><span class="line">     -</span><br></pre></td></tr></table></figure>
+<p>从终端的输出信息我们可以发现具体的实现类为<code>com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask</code>。</p>
+    
+    
+    
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/object-Object/" rel="tag">[object Object]</a></li></ul>
+
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">AGP资源编译之MergeMergeResources流程分析</a>
+  </h2>
+  
+  
+
+      <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="archive-article-date">
+  <time datetime="2023-12-01T17:56:35.000Z" itemprop="datePublished">12/02</time>
+</a>
+    </header>
+    
+      <!--  -->
+<p>自AGP3.0起，默认的资源打包工具从<code>AAPT</code> v1版本升级为v2。<code>APPT2</code>的可执行文件存放在<code>Android SDK的build-tools/$version</code>路径下。在AAPT1中通过<code>package</code>命令把原始的资源文件编译成各式的二进制文件，并且压缩到一个ZIP归档中，升级到<code>AAPT2</code>后，编译的过程交由<code>compile</code>命令处理，合并归档的操作交给了<code>link</code>命令处理。<code>AGP7.x+</code>的代码中，<code>AAPT1</code>的内容相关的代码都已被删除。本次分析的<code>AGP</code>源码版本7.2.</p>
+    
+    
+    
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
+
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/">AGP与资源构建交互的相关API</a>
+  </h2>
+  
+  
+
+      <a href="/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/" class="archive-article-date">
+  <time datetime="2023-11-23T14:23:25.000Z" itemprop="datePublished">11/23</time>
+</a>
+    </header>
+    
+      <!--  -->
+
+<p>Android构建的过程，其中很重要的部分就是资源的构建，AGP通过把项目中资源进行link、complie、merge…等这些操作，最终把需要的资源打包进入APK中。如果大家熟悉AGP流程它是把这些操作封装各种Task来完成，但除此之外AGP还提供很多方便的API帮助我们动态化的构建。</p>
+    
+    
+    
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/object-Object/" rel="tag">[object Object]</a></li></ul>
+
+    
+  </div>
+
+</article>
+      
+  
+  
+  
+  </div>
+  </div>
   
   
   <div class="archives-wrap">
@@ -53,7 +169,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_clpmycb570011szvhbkhu8g7i">
+        <a class="article-gallery-img" href="/2021/12/22/apk-size-resources/" rel="gallery_clpnr7164000zxevh8tc42756">
           <img src="https://s2.loli.net/2021/12/22/IXpLoPCi57AHr3h.png" itemprop="image">
         </a>
       
@@ -77,7 +193,7 @@
     
     
       
-<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/apk/" rel="tag">apk</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gradle/" rel="tag">gradle</a></li></ul>
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/apk/" rel="tag">apk</a></li></ul>
 
     
   </div>
@@ -109,98 +225,6 @@
     <p><ul class="list-inline">
   
   <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-</ul></p>
-  </div>
-</footer>
-  </main>
-  <aside class="sidebar">
-    <button class="navbar-toggle"></button>
-<nav class="navbar">
-  
-  <div class="logo">
-    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
-  </div>
-  
-  <ul class="nav nav-main">
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/">主页</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/archives">归档</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/categories/">分类</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/gallery">相册</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/about">关于</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link nav-item-search" title="搜索">
-        <i class="fe fe-search"></i>
-        搜索
-      </a>
-    </li>
-  </ul>
-</nav>
-<nav class="navbar navbar-bottom">
-  <ul class="nav">
-    <li class="nav-item">
-      <div class="totop" id="totop">
-  <i class="fe fe-rocket"></i>
-</div>
-    </li>
-    <li class="nav-item">
-      
-      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
-        <i class="fe fe-feed"></i>
-      </a>
-      
-    </li>
-  </ul>
-</nav>
-<div class="search-form-wrap">
-  <div class="local-search local-search-plugin">
-  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
-  <div id="local-search-result" class="local-search-result"></div>
-</div>
-</div>
-  </aside>
-  
-<script src="/js/jquery-2.0.3.min.js"></script>
-
-
-<script src="/js/jquery.justifiedGallery.min.js"></script>
-
-
-<script src="/js/lazyload.min.js"></script>
-
-
-<script src="/js/busuanzi-2.3.pure.min.js"></script>
-
-
-
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-
-
-<script src="/js/ocean.js"></script>
-
-</body>
-
-</html></span></li>
   
 </ul></p>
   </div>

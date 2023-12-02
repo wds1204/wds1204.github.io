@@ -8,7 +8,7 @@
   
   
   <title>
-    Tag: AGP |
+    AGP资源链接之LinkApplicationAndroidResourcesTask流程分析 |
     
     modi.wu
   </title>
@@ -32,132 +32,82 @@
 <body>
   <main class="content">
     <section class="outer">
-  <article class="articles">
+  <article id="post-AGP资源链接之LinkApplicationAndroidResourcesTask流程分析" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
     
-    <h1 class="page-type-title">#&nbspAGP</h1>
-    
-  
-  
-  
-  
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2023" class="archive-year">2023</a>
-    </div>
-    <div class="archives">
-      
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
+    <header class="article-header">
       
   
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">AGP资源链接之LinkApplicationAndroidResourcesTask流程分析</a>
-  </h2>
+  <h1 class="article-title" itemprop="name">
+    AGP资源链接之LinkApplicationAndroidResourcesTask流程分析
+  </h1>
   
   
 
-      <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="archive-article-date">
-  <time datetime="2023-12-02T07:01:14.000Z" itemprop="datePublished">12/02</time>
-</a>
     </header>
     
-      <!-- -->
+
+    
+    <div class="article-meta">
+      <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="article-date">
+  <time datetime="2023-12-02T07:01:14.000Z" itemprop="datePublished">2023-12-02</time>
+</a>
+      
+    </div>
+    
+
+    
+    
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <!-- -->
 <p>AGP link资源的过程所执行task的名称叫<code>processDebugResource</code>，我们需要根据task名称找到具体的实现类，Gradle提供了一个很实用的命令，可根据任务名查询实现类。</p>
 <blockquote>
 <p>./gradlew help –task <taskName><br>查找<code>processDebugResources</code>:</p>
 </blockquote>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew <span class="built_in">help</span> --task processDebugResources</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :<span class="built_in">help</span></span></span><br><span class="line">Detailed task information for processDebugResources</span><br><span class="line">Path</span><br><span class="line">     :app:processDebugResources</span><br><span class="line">Type</span><br><span class="line">     LinkApplicationAndroidResourcesTask (com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask)</span><br><span class="line">Description</span><br><span class="line">     -</span><br><span class="line">Group</span><br><span class="line">     -</span><br></pre></td></tr></table></figure>
 <p>从终端的输出信息我们可以发现具体的实现类为<code>com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask</code>。</p>
-    
-    
-    
-      
-<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/object-Object/" rel="tag">[object Object]</a></li></ul>
+<span id="more"></span>
 
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">AGP资源编译之MergeMergeResources流程分析</a>
-  </h2>
-  
-  
-
-      <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="archive-article-date">
-  <time datetime="2023-12-01T17:56:35.000Z" itemprop="datePublished">12/02</time>
-</a>
-    </header>
-    
-      <!--  -->
-<p>自AGP3.0起，默认的资源打包工具从<code>AAPT</code> v1版本升级为v2。<code>APPT2</code>的可执行文件存放在<code>Android SDK的build-tools/$version</code>路径下。在AAPT1中通过<code>package</code>命令把原始的资源文件编译成各式的二进制文件，并且压缩到一个ZIP归档中，升级到<code>AAPT2</code>后，编译的过程交由<code>compile</code>命令处理，合并归档的操作交给了<code>link</code>命令处理。<code>AGP7.x+</code>的代码中，<code>AAPT1</code>的内容相关的代码都已被删除。本次分析的<code>AGP</code>源码版本7.2.</p>
-    
-    
-    
-      
-<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
-
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/">AGP与资源构建交互的相关API</a>
-  </h2>
-  
-  
-
-      <a href="/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/" class="archive-article-date">
-  <time datetime="2023-11-23T14:23:25.000Z" itemprop="datePublished">11/23</time>
-</a>
-    </header>
-    
-      <!--  -->
-
-<p>Android构建的过程，其中很重要的部分就是资源的构建，AGP通过把项目中资源进行link、complie、merge…等这些操作，最终把需要的资源打包进入APK中。如果大家熟悉AGP流程它是把这些操作封装各种Task来完成，但除此之外AGP还提供很多方便的API帮助我们动态化的构建。</p>
-    
-    
-    
-      
-<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/object-Object/" rel="tag">[object Object]</a></li></ul>
-
-    
-  </div>
-
-</article>
-      
       
     </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clpnr714w0001xevh4ph1acxy" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/object-Object/" rel="tag">[object Object]</a></li></ul>
+
+    </footer>
+
   </div>
+
   
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">AGP资源编译之MergeMergeResources流程分析</div>
+  </a>
+  
+</nav>
+
   
 
   
+  
+  
+  
+
+</article>
 </section>
     <footer class="footer">
   <div class="outer">
@@ -176,6 +126,8 @@
     <p><ul class="list-inline">
   
   <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul></p>
   </div>
@@ -260,6 +212,24 @@
 
 
 
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
 
 
 

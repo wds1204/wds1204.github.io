@@ -73,16 +73,21 @@
         <!-- -->
 <p>AGP link资源的过程所执行task的名称叫<code>processDebugResource</code>，我们需要根据task名称找到具体的实现类，Gradle提供了一个很实用的命令，可根据任务名查询实现类。</p>
 <blockquote>
-<p>./gradlew help –task <taskName><br>查找<code>processDebugResources</code>:</p>
+<p>./gradlew help –task <taskName></p>
 </blockquote>
+<p>查找<code>processDebugResources</code>:</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew <span class="built_in">help</span> --task processDebugResources</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :<span class="built_in">help</span></span></span><br><span class="line">Detailed task information for processDebugResources</span><br><span class="line">Path</span><br><span class="line">     :app:processDebugResources</span><br><span class="line">Type</span><br><span class="line">     LinkApplicationAndroidResourcesTask (com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask)</span><br><span class="line">Description</span><br><span class="line">     -</span><br><span class="line">Group</span><br><span class="line">     -</span><br></pre></td></tr></table></figure>
 <p>从终端的输出信息我们可以发现具体的实现类为<code>com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask</code>。</p>
 <span id="more"></span>
+<blockquote>
+<p>本次分析的<code>AGP</code>源码版本7.2.2</p>
+</blockquote>
+<p><code>LinkApplicationAndroidResourcesTask</code>虽然也继承至IncrementalTask</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clpp65kci0004zjvhfofahmdd" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clpp6ms50000ai1vhh09l5wz0" class="article-share-link">
         分享
       </a>
       

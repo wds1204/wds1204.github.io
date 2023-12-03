@@ -100,13 +100,26 @@
       
       
         
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      
+      <a class="article-gallery-img" href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" rel="gallery_clpp6ms50000ai1vhh09l5wz0">
+        <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/git.png?raw=true" itemprop="image">
+      </a>
+      
+    
+  </div>
+</div>
+
       
       
         <!-- -->
 <p>AGP link资源的过程所执行task的名称叫<code>processDebugResource</code>，我们需要根据task名称找到具体的实现类，Gradle提供了一个很实用的命令，可根据任务名查询实现类。</p>
 <blockquote>
-<p>./gradlew help –task <taskName><br>查找<code>processDebugResources</code>:</p>
+<p>./gradlew help –task <taskName></p>
 </blockquote>
+<p>查找<code>processDebugResources</code>:</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew <span class="built_in">help</span> --task processDebugResources</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :<span class="built_in">help</span></span></span><br><span class="line">Detailed task information for processDebugResources</span><br><span class="line">Path</span><br><span class="line">     :app:processDebugResources</span><br><span class="line">Type</span><br><span class="line">     LinkApplicationAndroidResourcesTask (com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask)</span><br><span class="line">Description</span><br><span class="line">     -</span><br><span class="line">Group</span><br><span class="line">     -</span><br></pre></td></tr></table></figure>
 <p>从终端的输出信息我们可以发现具体的实现类为<code>com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask</code>。</p>
         
@@ -119,7 +132,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clpp65kci0004zjvhfofahmdd" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clpp6ms50000ai1vhh09l5wz0" class="article-share-link">
         分享
       </a>
       
@@ -185,7 +198,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clpp65kcn0007zjvh6oba5ioz" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clpp6ms4y0008i1vh4l477nug" class="article-share-link">
         分享
       </a>
       
@@ -224,6 +237,10 @@
   <time datetime="2023-11-23T14:23:25.000Z" itemprop="datePublished">2023-11-23</time>
 </a>
       
+<div class="article-category">
+  <a class="article-category-link" href="/categories/AGP/">AGP</a> / <a class="article-category-link" href="/categories/Gradle/">Gradle</a>
+</div>
+
     </div>
     
 
@@ -248,11 +265,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/" data-id="clpp65kcm0006zjvh23wb16u7" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/" data-id="clpp6ms4w0006i1vh1f9h9aw7" class="article-share-link">
         分享
       </a>
       
-<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/object-Object/" rel="tag">[object Object]</a></li></ul>
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AGP/" rel="tag">AGP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
 
     </footer>
 
@@ -309,7 +326,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" data-id="clpp65kdp0021zjvhg5xu6wmc" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" data-id="clpp6ms600027i1vhgc4mdl4p" class="article-share-link">
         分享
       </a>
       
@@ -346,6 +363,10 @@
   <time datetime="2023-10-08T14:27:10.000Z" itemprop="datePublished">2023-10-08</time>
 </a>
       
+<div class="article-category">
+  <a class="article-category-link" href="/categories/regex/">regex</a>
+</div>
+
     </div>
     
 
@@ -359,7 +380,7 @@
   <div class="article-gallery-photos">
     
       
-      <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clpp65kdk001uzjvhcw7qbh9o">
+      <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clpp6ms5x001yi1vh494ufjen">
         <img src="https://raw.githubusercontent.com/wds1204/wds1204.github.io/main/images/regex-regular-expression.webp" itemprop="image">
       </a>
       
@@ -381,10 +402,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" data-id="clpp65kdk001uzjvhcw7qbh9o" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" data-id="clpp6ms5x001yi1vh494ufjen" class="article-share-link">
         分享
       </a>
       
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/regex/" rel="tag">regex</a></li></ul>
+
     </footer>
 
   </div>
@@ -431,7 +454,7 @@
   <div class="article-gallery-photos">
     
       
-      <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clpp65kcr000czjvh5kkcg5a0">
+      <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clpp6ms51000di1vh8nba8tx1">
         <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/eventdispatch/event_dispatch.png?raw=true" itemprop="image">
       </a>
       
@@ -452,7 +475,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" data-id="clpp65kcr000czjvh5kkcg5a0" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" data-id="clpp6ms51000di1vh8nba8tx1" class="article-share-link">
         分享
       </a>
       
@@ -510,7 +533,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/06/06/WMS-UI%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="clpp65kd5000xzjvhanjydxwl" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/06/06/WMS-UI%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="clpp6ms5i0012i1vh90a5ek6k" class="article-share-link">
         分享
       </a>
       
@@ -575,7 +598,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/10/27/Kotlin%E2%80%94%E5%8D%8F%E7%A8%8B%E5%9F%BA%E7%A1%80/" data-id="clpp65kcy000lzjvh8v2k60la" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/10/27/Kotlin%E2%80%94%E5%8D%8F%E7%A8%8B%E5%9F%BA%E7%A1%80/" data-id="clpp6ms5d000qi1vh1r6h7n8g" class="article-share-link">
         分享
       </a>
       
@@ -641,7 +664,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/10/18/%E5%AE%9E%E7%8E%B0%E7%94%9F%E6%88%90sequence%E5%BA%8F%E5%88%97%E7%9A%84%E6%96%B9%E6%B3%95/" data-id="clpp65kdn001xzjvhe03180tu" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/10/18/%E5%AE%9E%E7%8E%B0%E7%94%9F%E6%88%90sequence%E5%BA%8F%E5%88%97%E7%9A%84%E6%96%B9%E6%B3%95/" data-id="clpp6ms5y0021i1vhh6139kho" class="article-share-link">
         分享
       </a>
       
@@ -706,7 +729,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" data-id="clpp65kd80013zjvhbcqa30z3" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" data-id="clpp6ms5o001ii1vhe2kt0nzx" class="article-share-link">
         分享
       </a>
       

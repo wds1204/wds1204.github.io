@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    Gradle插件的分类 |
+    
+    modi.wu
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-Gradle插件的分类" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    Gradle插件的分类
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/12/13/Gradle%E6%8F%92%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB/" class="article-date">
+  <time datetime="2023-12-13T08:15:04.000Z" itemprop="datePublished">2023-12-13</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Gradle/">Gradle</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <!-- -->
+<p>许多<code>Gradle</code>功能都是通过添加插件(<code>Plugin</code>)来完成,例如插件可以添加新的任务（<code>JavaCompile</code>)、域对象（<code>sourceSet</code>）、约定（Java源码位于<code>src/main/java</code>文件下）等等功能。其实插件(<code>Plugin</code>)也可以分为两种常见的分类：脚本插件(<code>Script Plugin</code>)和二进制插件(<code>Binary Plugin</code>)。<br>二进制插件可以通过实现 <code>Plugin</code> 接口的方式编写，也可以通过 <code>Groovy</code>或 <code>Kotlin DSL</code> 中的声明来编写。它们可以驻留在构建脚本、项目层次结构中，也可以驻留在外部的插件 jar 中。脚本插件是附加的构建脚本，可进一步配置构建，并且通常实现声明性方法来操作构建。它们通常在构建中使用，但可以外部化和远程访问。</p>
+<span id="more"></span>
+
+<p><a name="gi3YU"></a></p>
+<h3 id="脚本插件-Script-Plugin"><a href="#脚本插件-Script-Plugin" class="headerlink" title="脚本插件(Script Plugin)"></a>脚本插件(Script Plugin)</h3><p>在<code>Gradle</code>的语境下，除去<code>init.gradle(.kts)</code>、<code>build.gradle(.kts)</code>和<code>setting.gradle(.kts)</code>脚本，其他脚本均视为插件，也就是脚本插件(<code>Script Plugin</code>)。这些脚本插件又可细分为两类：</p>
+<ul>
+<li>独立脚本插件(<code>Standalone Script Plugin</code>): 无特定的脚本存放点，只要是可被基础脚本索引到的独立脚本，都可称为独立脚本插件。</li>
+<li>预编译脚本插件(<code>Precompiled Script Plugin</code>): 需要将脚本放置到一个独立的模块，然后将其编译产物加入构建环境的依赖中，根据常见的存放点和引入方式，我们可以分为独立工程模块和buildSrc模块两种。</li>
+</ul>
+<p>假设有这么一个需求：对Android的各个模块统一配置lint相关的参数。通过配置对比了解两种脚本的异同。<br><a name="P767n"></a></p>
+<h4 id="预编译脚本插件"><a href="#预编译脚本插件" class="headerlink" title="预编译脚本插件"></a>预编译脚本插件</h4><p>首先看预编译脚本如何实现的，预编译脚本需要放入到独立的模块，为了方便放入到<code>buildSrc</code>内:</p>
+<blockquote>
+<p>–Project<br>    I—app<br>        I—build.gradle.kts<br>    I—buildSrc<br>        I—src<br>            I—main<br>                I—kotlin<br>                    I—com.modi.introduction.buildSrc<br>                        I—lib-convention-script-plugin.gradle.kts</p>
+</blockquote>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">plugins&#123;</span><br><span class="line">    id(<span class="string">&quot;com.android.application&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">android&#123;</span><br><span class="line">    lint &#123;</span><br><span class="line">        abortOnError=<span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">println(<span class="string">&quot;this lib-convention-script-plugin.gradle.kts from ./buildSrc is applied&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>从上面看和我在模块中直接配置好像没什么区别，为什么放到buildSrc中的脚本就成了预编译脚本呢？</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    `kotlin-dsl`</span><br><span class="line">    `java-gradle-plugin`</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    google()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    implementation(<span class="string">&quot;com.android.tools.build:gradle:7.2.2&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实时上其中奥秘就是<code>buildSrc</code>模块下<code>build.gradle.kts</code>引入的<code>kotlin-dsl</code>插件：它引入了kotlin系列插件、<code>Java-gradle-plugin</code>、<code>precompiled- script-plugin</code>的系列插件，覆盖了Kotlin编译器插件和Gradle插件。脚本经过编译会生成一个普通的二进制插件，通过<code>apply(...)</code>方法包裹了其具体内容，预编译脚本插件的名称也由此而来：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Precompiled [lib-convention-script-plugin.gradle.kts][Lib_convention_script_plugin_gradle] script plugin.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> Lib_convention_script_plugin_gradle</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LibConventionScriptPluginPlugin</span> : <span class="type">org.gradle.api.Plugin</span>&lt;<span class="type">org.gradle.api.Project</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">apply</span><span class="params">(target: <span class="type">org</span>.<span class="type">gradle</span>.<span class="type">api</span>.<span class="type">Project</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class</span><br><span class="line">                .forName(<span class="string">&quot;Lib_convention_script_plugin_gradle&quot;</span>)</span><br><span class="line">                .getDeclaredConstructor(org.gradle.api.Project::<span class="keyword">class</span>.java, org.gradle.api.Project::<span class="keyword">class</span>.java)</span><br><span class="line">                .newInstance(target, target)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: java.lang.reflect.InvocationTargetException) &#123;</span><br><span class="line">            <span class="keyword">throw</span> e.targetException</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>另外为了让独立脚本插件能够引用AGP配置,需要在<code>buildSrc</code>的<code>build.gralde.kts</code>中引入相关依赖</p>
+</blockquote>
+<p><a name="ybLjy"></a></p>
+<h4 id="独立脚本插件"><a href="#独立脚本插件" class="headerlink" title="独立脚本插件"></a>独立脚本插件</h4><p>接下来实现通过的功能看看独立脚本插件下如何配置</p>
+<blockquote>
+<p>–<strong>Project</strong><br>**    I—app**<br>**        I—build.gradle.kts**<br>**    I—standalone-scripts**<br>**        I—lib-convention-script-plugin2.gradle.kts**</p>
+</blockquote>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.android.build.gradle.LibraryExtension</span><br><span class="line">buildscript&#123;</span><br><span class="line">    repositories&#123;</span><br><span class="line">        mavenCentral()</span><br><span class="line">        google()</span><br><span class="line">        gradlePluginPortal()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath(<span class="string">&quot;com.android.tools.build:gradle:7.2.2&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply(plugin=<span class="string">&quot;com.android.library&quot;</span>)</span><br><span class="line"></span><br><span class="line">configure&lt;LibraryExtension&gt;&#123;</span><br><span class="line">    lint&#123;</span><br><span class="line">        abortOnError=<span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">println(<span class="string">&quot;The lib-convention-script-plugin2 from ./standalone-scripts is applied.&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p> 独立脚本插件是不依赖任何项目，知识单纯文件，有很多局限性，如果想要达到插件的效果，需要做一些配置工作。</p>
+<ol>
+<li>如果脚本需要用到任何依赖，都需要在自身的的buildscript{}dsl配置里声明，例如在这就单独加了AGP的依赖</li>
+<li>它不支持<code>plugins&#123;id(...)&#125;</code>的方式引入插件，必须使用<code>apply(plugin=&quot;...&quot;)</code></li>
+<li>由于<code>apply(plugin=&quot;...&quot;)</code>不支持类型安全的模型访问器,所以无法直接使用<code>android&#123;&#125;</code>的配置入口，取而代之的是原生Gradle的API configure<T>(…)</li>
+</ol>
+<p>Android 的模块中引入独立脚本插件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply(from = &quot;../standalone-scripts/lib-convention-script-plugin2.gradle.kts&quot;)</span><br></pre></td></tr></table></figure>
+<p> <br />在<code>Gradle Groovy DSL</code> 中，没有上述的限制，所以大家在<code>Groovy</code>的情况下往往直接使用独立脚本插件。但是在<code>Gradle Kotlin DSL</code>的环境下，官方推荐使用预编译脚本插件，统一的管理和类型安全的模型访问器能给开发中带来便利。<br />独立脚本插件和预编译插件总结：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>独立脚本插件(<code>standalone script plugin</code>)</th>
+<th>预编译脚本插件(precompiled script plugin)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>指定目录</td>
+<td>无</td>
+<td>buildSrc或其他独立模块，该模块需要引入kotlin-dsl插件</td>
+</tr>
+<tr>
+<td>被引入的方式</td>
+<td>只能通过apply(from=””)方式引入到脚本中</td>
+<td>支持plugins(id(“”))和<br />apply(from=””)</td>
+</tr>
+<tr>
+<td>引入外部插件</td>
+<td>只能通过apply(from=””)方式</td>
+<td>支持plugins(id(“”))和<br />apply(from=””)</td>
+</tr>
+<tr>
+<td>引入外部依赖</td>
+<td>使用buildscript(…)进行独立声明</td>
+<td>基于项目自身的build.gradle.kts声明的依赖环境</td>
+</tr>
+<tr>
+<td>类型安全的模型访问器</td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+</tbody></table>
+<p><a name="Oz54G"></a></p>
+<h3 id="二进制插件-Binary-Plugin"><a href="#二进制插件-Binary-Plugin" class="headerlink" title="二进制插件(Binary Plugin)"></a>二进制插件(Binary Plugin)</h3><p>日常开发中我们看到的二进制插件(Binary Plugin)一般都是XXXPlugin.kt等类或者文件载体，其内部的代码实现了<code>org.gradle.api.Plugin</code>的类。注意并非因为它是一个.kt文件，才可以称之为二进制插件(Binary Plugin),在脚本插件(Script Plugin)中同样可以显示声明一个这样的类：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//buildSrc/src/main/kotlin/dummy-script-plugin.gradle.kts</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DummyBinaryPluginInScript</span>:<span class="type">Plugin</span>&lt;<span class="type">Project</span>&gt;</span>&#123;</span><br><span class="line">    <span class="comment">//这里的参数不能用project，会和脚本自身环境中project冲突</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">apply</span><span class="params">(target: <span class="type">Project</span>)</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;DummyBinaryPluginInScript&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">apply&lt;DummyBinaryPluginInScript&gt;()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在这个环境下，我们只能通过apply引用插件。而<code>plugin&#123;id(..)&#125;</code>的方式则需要借助完整的工程结构和<code>java-gradle-plugin</code>来实现。完整的工程结构同预编译脚步插件：需要将这些类放置到一个独立的模块，然后将其编译产物加入构建环境的依赖中，根据常见的存放点和引入方式，分为独立工程模块和buildSrc模块两种。</p>
+<p>我们先看一个简单的二进制插件(Binary Plugin):</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//buildSrc/src/main/kotlin/.../LibConventionBinaryPlugin</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LibConventionBinaryPlugin</span>:<span class="type">Plugin</span>&lt;<span class="type">Project</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">apply</span><span class="params">(target: <span class="type">Project</span>)</span></span> &#123;</span><br><span class="line">        println(<span class="string">&quot;The lib-convention-binary-plugin &quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>来到buildSrc中的build.gralde.kts:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gradlePlugin &#123;</span><br><span class="line">    plugins.register(<span class="string">&quot;lib-convention-binary-plugin&quot;</span>)&#123;</span><br><span class="line">        id=<span class="string">&quot;lib-convention-binary-plugin&quot;</span></span><br><span class="line">        implementationClass=<span class="string">&quot;com.modi.introduction.buildsrc.LibConventionBinaryPlugin&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>gradlePlugin{…}的配置用于注册一系列二进制插件到输出的jar包中，你可以在下述路径中发现它的身影：build/resources/main/META-INF/gradle-plugins/lib-convention-binary-plugin.properties。这是典型的一种Service Provider Interface(SPI)的做法，Gradle在加载了该模块后，会搜素MATE-INF/gradle-plugins区域的文件，把符合条件的插件注册到当前可使用的插件列表。它和Google的AutoService工具的作用类似，通过插件描述或者注解标记等方法生产资源描述文件，减少手动创建资源描述的工作。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//lib-convention-binary-plugin.properties</span></span><br><span class="line">implementation-<span class="class"><span class="keyword">class</span>=<span class="title">com</span>.<span class="title">modi</span>.<span class="title">introduction</span>.<span class="title">buildsrc</span>.<span class="title">LibConventionBinaryPlugin</span></span></span><br></pre></td></tr></table></figure>
+
+<p>参考：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/plugins.html">Using Gradle Plugins</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/custom_plugins.html">Developing Custom Gradle Plugins</a></li>
+<li>Android 构建与架构实战</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2023/12/13/Gradle%E6%8F%92%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB/" data-id="clq3ina9l000fmqvhbcvh8qw2" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">AGP资源链接之LinkApplicationAndroidResourcesTask流程分析</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2023</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

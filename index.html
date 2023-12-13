@@ -64,6 +64,72 @@
     <h1 class="page-type-title"></h1>
     
     
+    <article id="post-Gradle插件的分类" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/12/13/Gradle%E6%8F%92%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB/">Gradle插件的分类</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/12/13/Gradle%E6%8F%92%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB/" class="article-date">
+  <time datetime="2023-12-13T08:15:04.000Z" itemprop="datePublished">2023-12-13</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Gradle/">Gradle</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <!-- -->
+<p>许多<code>Gradle</code>功能都是通过添加插件(<code>Plugin</code>)来完成,例如插件可以添加新的任务（<code>JavaCompile</code>)、域对象（<code>sourceSet</code>）、约定（Java源码位于<code>src/main/java</code>文件下）等等功能。其实插件(<code>Plugin</code>)也可以分为两种常见的分类：脚本插件(<code>Script Plugin</code>)和二进制插件(<code>Binary Plugin</code>)。<br>二进制插件可以通过实现 <code>Plugin</code> 接口的方式编写，也可以通过 <code>Groovy</code>或 <code>Kotlin DSL</code> 中的声明来编写。它们可以驻留在构建脚本、项目层次结构中，也可以驻留在外部的插件 jar 中。脚本插件是附加的构建脚本，可进一步配置构建，并且通常实现声明性方法来操作构建。它们通常在构建中使用，但可以外部化和远程访问。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/12/13/Gradle%E6%8F%92%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2023/12/13/Gradle%E6%8F%92%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB/" data-id="clq3ina9l000fmqvhbcvh8qw2" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gradle/" rel="tag">Gradle</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
     <article id="post-AGP资源链接之LinkApplicationAndroidResourcesTask流程分析" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -104,7 +170,7 @@
   <div class="article-gallery-photos">
     
       
-      <a class="article-gallery-img" href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" rel="gallery_clppnyloa0009atvhht6peczf">
+      <a class="article-gallery-img" href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" rel="gallery_clq3ina9j000amqvhe7s50goj">
         <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/agplink/Snipaste_2023-12-03_22-32-12.png?raw=true" itemprop="image">
       </a>
       
@@ -125,7 +191,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clppnyloa0009atvhht6peczf" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clq3ina9j000amqvhe7s50goj" class="article-share-link">
         分享
       </a>
       
@@ -191,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clppnyloi000jatvh1abg5ny0" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/12/02/AGP%E8%B5%84%E6%BA%90%E7%BC%96%E8%AF%91%E4%B9%8BMergeResources%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" data-id="clq3ina9g0006mqvhbj0thj9c" class="article-share-link">
         分享
       </a>
       
@@ -258,7 +324,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/" data-id="clppnylo80007atvhh81zbb87" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/11/23/AGP%E4%B8%8E%E8%B5%84%E6%BA%90%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BA%92%E7%9A%84%E7%9B%B8%E5%85%B3API/" data-id="clq3ina9h0008mqvh1t3d9qfl" class="article-share-link">
         分享
       </a>
       
@@ -319,7 +385,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" data-id="clppnylp40023atvhdhyzap2q" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/10/09/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96/" data-id="clq3inaaq003smqvhcv62frne" class="article-share-link">
         分享
       </a>
       
@@ -373,7 +439,7 @@
   <div class="article-gallery-photos">
     
       
-      <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clppnylp20020atvhc4wx6kb5">
+      <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clq3inaam003jmqvh4tpd9m9h">
         <img src="https://raw.githubusercontent.com/wds1204/wds1204.github.io/main/images/regex-regular-expression.webp" itemprop="image">
       </a>
       
@@ -395,7 +461,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" data-id="clppnylp20020atvhc4wx6kb5" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" data-id="clq3inaam003jmqvh4tpd9m9h" class="article-share-link">
         分享
       </a>
       
@@ -447,7 +513,7 @@
   <div class="article-gallery-photos">
     
       
-      <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clppnylob000aatvhbna2aaqn">
+      <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clq3ina9n000hmqvhhzm247w8">
         <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/eventdispatch/event_dispatch.png?raw=true" itemprop="image">
       </a>
       
@@ -468,7 +534,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" data-id="clppnylob000aatvhbna2aaqn" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" data-id="clq3ina9n000hmqvhhzm247w8" class="article-share-link">
         分享
       </a>
       
@@ -526,7 +592,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2023/06/06/WMS-UI%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="clppnylon000vatvh8wl58plq" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2023/06/06/WMS-UI%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" data-id="clq3ina9z0019mqvh54g45g43" class="article-share-link">
         分享
       </a>
       
@@ -591,7 +657,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/10/27/Kotlin%E2%80%94%E5%8D%8F%E7%A8%8B%E5%9F%BA%E7%A1%80/" data-id="clppnylp7002aatvhfm7p6nem" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/10/27/Kotlin%E2%80%94%E5%8D%8F%E7%A8%8B%E5%9F%BA%E7%A1%80/" data-id="clq3ina9t000smqvh9ou382qd" class="article-share-link">
         分享
       </a>
       
@@ -657,72 +723,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/10/18/%E5%AE%9E%E7%8E%B0%E7%94%9F%E6%88%90sequence%E5%BA%8F%E5%88%97%E7%9A%84%E6%96%B9%E6%B3%95/" data-id="clppnylp1001vatvh1yiw9s55" class="article-share-link">
-        分享
-      </a>
-      
-<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/" rel="tag">kotlin</a></li></ul>
-
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-    
-    <article id="post-kotlin中的序列(Sequences)" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-      
-  
-  <h2 class="article-title" itemprop="name">
-    <a href="/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/">Kotlin中的序列(Sequences)</a>
-  </h2>
-  
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" class="article-date">
-  <time datetime="2022-10-11T12:34:02.000Z" itemprop="datePublished">2022-10-11</time>
-</a>
-      
-<div class="article-category">
-  <a class="article-category-link" href="/categories/kotlin/">kotlin</a>
-</div>
-
-    </div>
-    
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-      
-        
-      
-      
-        <p>除集合之外，kotlin的标准库中还提供了另一种容器——序列(<code>Sequence&lt;T&gt;</code>)。序列同样提供了<code>Iterable</code>相<br>同的函数，但实现的是另一种方法进行多步骤的集合处理。如果你熟悉Java，其实就是Java8版本中<code>Stream</code>的翻版。</p>
-        
-          <p>
-            <a class="article-more-link" href="/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/">
-              阅读全文...
-            </a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://wds1204.github.io/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/" data-id="clppnylos0017atvh4izxd7xs" class="article-share-link">
+      <a data-url="https://wds1204.github.io/2022/10/18/%E5%AE%9E%E7%8E%B0%E7%94%9F%E6%88%90sequence%E5%BA%8F%E5%88%97%E7%9A%84%E6%96%B9%E6%B3%95/" data-id="clq3inaao003mmqvh4n466v54" class="article-share-link">
         分享
       </a>
       

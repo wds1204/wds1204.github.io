@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    关于So库的动态加载 |
+    
+    modi.wu
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-关于So库的动态加载" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    关于So库的动态加载
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2024/06/19/%E5%85%B3%E4%BA%8ESo%E5%BA%93%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/" class="article-date">
+  <time datetime="2024-06-19T14:13:58.000Z" itemprop="datePublished">2024-06-19</time>
+</a>
+      
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <!--  -->
+<p>在Android日常开发中，经常需要用到一些第三方so库，往往so库的内存都挺大的(相对于APK的体积来说)，随着so库使用越多，在整个APK体积中的占比就越多，为了解决这一问题就诞生出了so库的动态加载。 <br /><br><a name="bvYQo"></a></p>
+<span id="more"></span>
+
+<p>文章中代码使用的<a target="_blank" rel="noopener" href="https://github.com/wds1204/dynamicSo">Demo</a></p>
+<h3 id="1-So库的加载原理"><a href="#1-So库的加载原理" class="headerlink" title="1. So库的加载原理"></a>1. So库的加载原理</h3><p>首先我们需要了解，系统加载So库的工作流程，当我们调用System.loadLibrary(“XXX”)后，Android的Framework层都干了什么？Android的So加载机制，大致可分为四个步骤：</p>
+<ol>
+<li>安装APK的时候，PMS根据当前设备abi信息，从APK包拷贝相应的So文件</li>
+<li>启动APP的时候，Android Framework创建应用的classloader实例，并将当前应用的相关所有so库文件所在的目录注入到当前的ClassLoader中。</li>
+<li>调用<code>System.loadLibrary(&quot;XXX&quot;)</code>framework从上下文ClassLoader实例目录数组中查找并加载名为libXXX.so的文件</li>
+<li>调用so库相关的JNI文件。</li>
+</ol>
+<p>步骤1和2不熟悉的朋友，可以自行阅读相关源码和资料。这里我们直接分析第三步。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">System</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loadLibrary</span><span class="params">(String libname)</span> </span>&#123;</span><br><span class="line">		Runtime.getRuntime().loadLibrary0(Reflection.getCallerClass(), libname);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Runtime</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">loadLibrary0</span><span class="params">(ClassLoader loader, Class&lt;?&gt; callerClass, String libname)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (libname.indexOf((<span class="keyword">int</span>)File.separatorChar) != -<span class="number">1</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> UnsatisfiedLinkError(</span><br><span class="line">				<span class="string">&quot;Directory separator should not appear in library name: &quot;</span> + libname);</span><br><span class="line">		&#125;</span><br><span class="line">		String libraryName = libname;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (loader != <span class="keyword">null</span> &amp;&amp; !(loader <span class="keyword">instanceof</span> BootClassLoader)) &#123;</span><br><span class="line">			String filename = loader.findLibrary(libraryName);<span class="comment">//加载so库</span></span><br><span class="line">			<span class="keyword">if</span> (filename == <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">				(loader.getClass() == PathClassLoader.class ||</span><br><span class="line">				 loader.getClass() == DelegateLastClassLoader.class)) &#123;</span><br><span class="line"></span><br><span class="line">				filename = System.mapLibraryName(libraryName);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (filename == <span class="keyword">null</span>) &#123;</span><br><span class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> UnsatisfiedLinkError(loader + <span class="string">&quot; couldn&#x27;t find \&quot;&quot;</span> +</span><br><span class="line">											   System.mapLibraryName(libraryName) + <span class="string">&quot;\&quot;&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			String error = nativeLoad(filename, loader);<span class="comment">//加载so文件</span></span><br><span class="line">			<span class="keyword">if</span> (error != <span class="keyword">null</span>) &#123;</span><br><span class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> UnsatisfiedLinkError(error);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>BaseDexClassLoader</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseDexClassLoader</span></span>&#123;</span><br><span class="line">    <span class="meta">@UnsupportedAppUsage</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DexPathList pathList;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">findLibrary</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> pathList.findLibrary(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DexPathList </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DexPathList</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** list of native library directory elements */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> File[] nativeLibraryDirectories;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">findLibrary</span><span class="params">(String libraryName)</span> </span>&#123;</span><br><span class="line">        String fileName = System.mapLibraryName(libraryName);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (NativeLibraryElement element : nativeLibraryPathElements) &#123;</span><br><span class="line">            String path = element.findNativeLibrary(fileName);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (path != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> path;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>System.loadLibrary</code>方法时，系统最终会调用到<code>DexPathList</code>类的<code>findLibrary</code>方法，该方法会在<code>nativeLibraryPathElements</code>数组中查找对应的路径，我们将自己的so加入到<code>nativeLibraryPathElements</code>最前面，由此达到动态加入so的目标。<br />可以通过如下,（注意不同的Android版本实现的方法略不同，需要做好适配，可查看<a target="_blank" rel="noopener" href="https://github.com/wds1204/dynamicSo/blob/master/dySolib/src/main/java/com/modi/dysolib/LoadLibraryUtils.kt">此处的代码</a>）。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">object</span> V25 &#123;</span><br><span class="line">	<span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">	<span class="function"><span class="keyword">fun</span> <span class="title">install</span><span class="params">(classLoader: <span class="type">ClassLoader</span>, folder: <span class="type">File</span>)</span></span> &#123;</span><br><span class="line">		<span class="keyword">val</span> pathListField = ReflectUtil.findField(classLoader, <span class="string">&quot;pathList&quot;</span>)</span><br><span class="line">		<span class="keyword">val</span> dexPathList = pathListField[classLoader]</span><br><span class="line">		<span class="keyword">val</span> nativeLibraryDirectories =</span><br><span class="line">		ReflectUtil.findField(dexPathList, <span class="string">&quot;nativeLibraryDirectories&quot;</span>)</span><br><span class="line">		<span class="keyword">var</span> origLibDirs = nativeLibraryDirectories[dexPathList] <span class="keyword">as</span> MutableList&lt;File&gt;</span><br><span class="line">		<span class="keyword">if</span> (origLibDirs == <span class="literal">null</span>) &#123;</span><br><span class="line">			origLibDirs = ArrayList(<span class="number">2</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">val</span> libDirIt = origLibDirs.iterator()</span><br><span class="line">		<span class="keyword">while</span> (libDirIt.hasNext()) &#123;</span><br><span class="line">			<span class="keyword">val</span> libDir = libDirIt.next()</span><br><span class="line">			<span class="keyword">if</span> (folder == libDir) &#123;</span><br><span class="line">				libDirIt.remove()</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		origLibDirs.add(<span class="number">0</span>, folder)</span><br><span class="line">		<span class="keyword">val</span> systemNativeLibraryDirectories =</span><br><span class="line">		ReflectUtil.findField(dexPathList, <span class="string">&quot;systemNativeLibraryDirectories&quot;</span>)</span><br><span class="line">		<span class="keyword">var</span> origSystemLibDirs = systemNativeLibraryDirectories[dexPathList] <span class="keyword">as</span> List&lt;File&gt;</span><br><span class="line">		<span class="keyword">if</span> (origSystemLibDirs == <span class="literal">null</span>) &#123;</span><br><span class="line">			origSystemLibDirs = ArrayList(<span class="number">2</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">val</span> newLibDirs: MutableList&lt;File&gt; =</span><br><span class="line">		ArrayList(origLibDirs.size + origSystemLibDirs.size + <span class="number">1</span>)</span><br><span class="line">		newLibDirs.addAll(origLibDirs)</span><br><span class="line">		newLibDirs.addAll(origSystemLibDirs)</span><br><span class="line">		<span class="keyword">val</span> makeElements = ReflectUtil.findMethod(</span><br><span class="line">			dexPathList,</span><br><span class="line">			<span class="string">&quot;makePathElements&quot;</span>,</span><br><span class="line">			MutableList::<span class="keyword">class</span>.java</span><br><span class="line">		)</span><br><span class="line">		<span class="keyword">val</span> elements = makeElements.invoke(dexPathList, newLibDirs) <span class="keyword">as</span> Array&lt;Any&gt;</span><br><span class="line">		<span class="keyword">val</span> nativeLibraryPathElements =</span><br><span class="line">		ReflectUtil.findField(dexPathList, <span class="string">&quot;nativeLibraryPathElements&quot;</span>)</span><br><span class="line">		nativeLibraryPathElements[dexPathList] = elements</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-需要注意的问题"><a href="#2-需要注意的问题" class="headerlink" title="2. 需要注意的问题"></a>2. 需要注意的问题</h3><h4 id="2-1-依赖库dlopen失败问题"><a href="#2-1-依赖库dlopen失败问题" class="headerlink" title="2.1 依赖库dlopen失败问题"></a>2.1 依赖库dlopen失败问题</h4><p>如果我们使用了2个so文件：LibA.so和LibB.so,当我们调用系统的<code>System.loadLibrary(&quot;A&quot;)</code>的时候，Android Framework最终会使用<code>dlopen</code>加载LibA.so 文件，并通过其依赖关系的信息自动使用<code>dlopen</code>加载libB.so<br />在Android N以前，只要将LibA.so和LibB.so所在的文件目录路径注入到当前的classLoader的nativeLibraryPathElements里，则加载so文件的时候，这两个文件都能正常被找到。从 N 开始,libA.so 能正常加载，而 libB.so 会出现加载失败错误。具体原因是Android Native用来链接so库的Linker.cpp dlopen函数有改动，以前Linker会从ClassLoader实例的nativeLibraryElements里的所有路径查找相应的so文件。更新后，更新之后，Linker 里检索的路径在创建 ClassLoader 实例后就被系统通过 Namespace 机制绑定了，当我们注入新的路径之后，虽然 ClassLoader 里的路径增加了，但是 Linker 里 Namespace 已经绑定的路径集合并没有同步更新，所以出现了 libA.so 文件能找到，而 libB.so 找不到的情况。<br />面对这个问题有以下几种解决方案：</p>
+<ul>
+<li>自定义System.loadLibrary,加载So文件前，先解析So的头文件中的依赖信息，再递归加载依赖的So文件，比如说<a target="_blank" rel="noopener" href="https://github.com/facebook/SoLoader/tree/main">SoLoader</a>开源库就如此。我自己实现的<a target="_blank" rel="noopener" href="https://github.com/wds1204/dynamicSo/tree/master/dySolib/src/main/java/com/modi/dysolib/elf">Demo</a>也是这么做的</li>
+<li>自定义Linker,完全自己控制So文件的检索逻辑，这就是开源库<a target="_blank" rel="noopener" href="https://github.com/KeepSafe/ReLinker">Relinker</a></li>
+<li>替换classLoader，但不建议这么做</li>
+<li><h4 id="2-1-如何动态化so库相关流程"><a href="#2-1-如何动态化so库相关流程" class="headerlink" title="2.1 如何动态化so库相关流程"></a>2.1 如何动态化so库相关流程</h4></li>
+</ul>
+<p>为了在开发阶段调试简单，第三方so库会存放在lib文件夹下,还是会用Cmake编译So库,最终所有的打包进APK中，代码中加载So库的方式还是用系统的<code>System.loadLibrary(&quot;xxx&quot;)</code>。最终发布正式版本的时候难道需要人工把so库文件从移除掉，代码中<code>System.loadLibrary(&quot;xxx&quot;)</code>手动修改吗？<br />为了解决这些问题可以从AGP构建流程中着手<br>，</p>
+<h5 id="2-2-通过variant类型移除so库"><a href="#2-2-通过variant类型移除so库" class="headerlink" title="2.2 通过variant类型移除so库"></a>2.2 通过variant类型移除so库</h5><p>我看网上很多方案通过在<code>merge$&#123;Variant.name&#125;NativeLibs(合并所有依赖的native库)</code>、<code>strip$&#123;Variant.name&#125;DebugSymbols(从Native库中移除debug的标志)</code>这两个Task之间插入一个自定义task,用来删除<code>merge$&#123;Variant.name&#125;NativeLibs</code>这个任务中需要动态下发So库文件。但这样就会破坏Gradle的缓存机制。其实官方已经给我提供了移除SO库的配置，我们可以在构建Release包的情况下使用如下方案：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">androidComponents.onVariants &#123; variant -&gt;</span><br><span class="line">    println(<span class="string">&quot;onVariant---<span class="subst">$&#123;variant.name&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> abi = arrayListOf(<span class="string">&quot;lib/arm64-v8a/&quot;</span>, <span class="string">&quot;lib/armeabi-v7a/&quot;</span>, <span class="string">&quot;lib/x86/&quot;</span>, <span class="string">&quot;lib/x86_64/&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> excludeSo = arrayListOf(<span class="string">&quot;libnativeLib.so&quot;</span>, <span class="string">&quot;libnative1.so&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (variant.name.contains(<span class="string">&quot;release&quot;</span>, <span class="literal">true</span>)) &#123;</span><br><span class="line"><span class="comment">//        println(&quot;$&#123;variant.externalNativeBuild?.abiFilters?.get()&#125;&quot;)</span></span><br><span class="line">        abi.forEach &#123; abiPath -&gt;</span><br><span class="line">            excludeSo.forEach &#123; so -&gt;</span><br><span class="line">                println(<span class="string">&quot;<span class="variable">$abiPath</span><span class="variable">$so</span>&quot;</span>)</span><br><span class="line">                variant.packaging.jniLibs.excludes.add(<span class="string">&quot;<span class="variable">$abiPath</span><span class="variable">$so</span>&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="ASM替换System-loadLibrary"><a href="#ASM替换System-loadLibrary" class="headerlink" title="ASM替换System.loadLibrary"></a>ASM替换System.loadLibrary</h5><p>通过<code>instrumentation API</code>(AGP 7.0之前使用 <code>Transform API </code>)字节码<code>“插桩”</code>的方式把项目中的<code>System.loadLibrary(&quot;xxx&quot;)</code>替换成你自己封装的So库加载方式：<code>DynamicSoHelp .loadSoLibrary(&quot;xxx&quot;)</code>。具体如何使用<code>instrumentation API</code>字节码替换，由于篇幅问题就不介绍了。</p>
+<h3 id="3-其他"><a href="#3-其他" class="headerlink" title="3.其他"></a>3.其他</h3><p>还有很多其它细节需要考虑，比如so库的上传下载，压缩和解压以及安全校验，整个流程中减少人为的操作，尽量通过自动化的流程来完成。在我思考这个过程中，在网上看到<a target="_blank" rel="noopener" href="https://juejin.cn/post/7113703128733581342#heading-47">货拉拉关于So库动态加载</a>系统化文章，很建议大家阅读。虽然方案没有开源，但介绍的的很详细，可以借鉴一下。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wds1204.github.io/2024/06/19/%E5%85%B3%E4%BA%8ESo%E5%BA%93%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/" data-id="clxlxfu280024j4vhbcvf7o9d" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2023/12/13/Gradle%E6%8F%92%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">Gradle插件的分类</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>modi.wu &copy; 2024</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank">WU</a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+    <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="modi.wu"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

@@ -44,6 +44,46 @@
   
   <div class="archives-wrap">
     <div class="archive-year-wrap">
+      <a href="/archives/2024" class="archive-year">2024</a>
+    </div>
+    <div class="archives">
+      
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2024/06/19/%E5%85%B3%E4%BA%8ESo%E5%BA%93%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/">关于So库的动态加载</a>
+  </h2>
+  
+  
+
+      <a href="/2024/06/19/%E5%85%B3%E4%BA%8ESo%E5%BA%93%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/" class="archive-article-date">
+  <time datetime="2024-06-19T14:13:58.000Z" itemprop="datePublished">06/19</time>
+</a>
+    </header>
+    
+      <!--  -->
+<p>在Android日常开发中，经常需要用到一些第三方so库，往往so库的内存都挺大的(相对于APK的体积来说)，随着so库使用越多，在整个APK体积中的占比就越多，为了解决这一问题就诞生出了so库的动态加载。 <br /><br><a name="bvYQo"></a></p>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+  
+  </div>
+  </div>
+  
+  
+  <div class="archives-wrap">
+    <div class="archive-year-wrap">
       <a href="/archives/2023" class="archive-year">2023</a>
     </div>
     <div class="archives">
@@ -82,7 +122,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" rel="gallery_clqp75lb1000aievh7vjrd0yq">
+        <a class="article-gallery-img" href="/2023/12/02/AGP%E8%B5%84%E6%BA%90%E9%93%BE%E6%8E%A5%E4%B9%8BLinkApplicationAndroidResourcesTask%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/" rel="gallery_clxlxfu1h0008j4vh9pp0dcju">
           <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/agplink/Snipaste_2023-12-03_22-32-12.png?raw=true" itemprop="image">
         </a>
       
@@ -203,7 +243,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clqp75lbr0020ievh4qhkdffm">
+        <a class="article-gallery-img" href="/2023/10/08/%E5%85%B3%E4%BA%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE/" rel="gallery_clxlxfu290026j4vh983afurl">
           <img src="https://raw.githubusercontent.com/wds1204/wds1204.github.io/main/images/regex-regular-expression.webp" itemprop="image">
         </a>
       
@@ -237,7 +277,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clqp75lb2000dievhhw5tetk5">
+        <a class="article-gallery-img" href="/2023/07/12/Android%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" rel="gallery_clxlxfu1l000fj4vhdd04dfy4">
           <img src="https://github.com/wds1204/wds1204.github.io/blob/main/images/eventdispatch/event_dispatch.png?raw=true" itemprop="image">
         </a>
       
@@ -331,35 +371,6 @@
 
 </article>
       
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2022/10/18/%E5%AE%9E%E7%8E%B0%E7%94%9F%E6%88%90sequence%E5%BA%8F%E5%88%97%E7%9A%84%E6%96%B9%E6%B3%95/">实现生成sequence序列的方法</a>
-  </h2>
-  
-  
-
-      <a href="/2022/10/18/%E5%AE%9E%E7%8E%B0%E7%94%9F%E6%88%90sequence%E5%BA%8F%E5%88%97%E7%9A%84%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  <time datetime="2022-10-18T13:24:15.000Z" itemprop="datePublished">10/18</time>
-</a>
-    </header>
-    
-      <p>这段时间在学习<code>kotlin</code>的协程相关的内容,其中看到一个函数<code>sequence(@BuilderInference block: suspend SequenceScope&lt;T&gt;.() -&gt; Unit)</code>，它可以一个接一个地或按任意大小的块生成<a href="https://wds1204.github.io/2022/10/11/kotlin%E4%B8%AD%E7%9A%84%E5%BA%8F%E5%88%97(Sequences)/">序列(Sequences)
-</a>。这个函数<br>接受一个包含调用 <code>yield()</code> 和 <code>yieldAll()</code> 函数的 lambda 表达式。它们将一个元素返回给序列消费者并暂停<br><code>sequence()</code>的执行，直到消费者请求下一个元素。 <code>yield()</code> 将单个元素作为参数；<code>yieldAll()</code>可以 接受一个 <code>Iterable</code>对象、一个<code>Iterator</code>或另一个<code>Sequence</code>。</p>
-    
-    
-    
-  </div>
-
-</article>
-      
       
     </div>
   </div>
@@ -375,7 +386,7 @@
     <footer class="footer">
   <div class="outer">
     <ul class="list-inline">
-      <li>modi.wu &copy; 2023</li>
+      <li>modi.wu &copy; 2024</li>
       
         <li>
           
